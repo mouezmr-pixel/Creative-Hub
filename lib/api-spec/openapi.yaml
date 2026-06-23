@@ -1,0 +1,2592 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Creative Studio CRM API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User management
+  - name: clients
+    description: Client management
+  - name: projects
+    description: Project management
+  - name: notes
+    description: Project notes/comments
+  - name: analytics
+    description: Financial analytics and summaries
+  - name: leads
+    description: Sales pipeline / leads management
+  - name: expenses
+    description: Business expense tracking
+  - name: recurring-expenses
+    description: Recurring expense templates
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List all users (admin only)
+      responses:
+        "200":
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [users]
+      summary: Create a user (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserBody"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateUser
+      tags: [users]
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserBody"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      summary: Archive user (soft-delete, admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Archived user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /clients:
+    get:
+      operationId: listClients
+      tags: [clients]
+      summary: List clients
+      parameters:
+        - name: photographerId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+    post:
+      operationId: createClient
+      tags: [clients]
+      summary: Create a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateClientBody"
+      responses:
+        "201":
+          description: Client created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+
+  /clients/{id}:
+    get:
+      operationId: getClient
+      tags: [clients]
+      summary: Get client by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateClient
+      tags: [clients]
+      summary: Update client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateClientBody"
+      responses:
+        "200":
+          description: Updated client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+    delete:
+      operationId: deleteClient
+      tags: [clients]
+      summary: Delete client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List projects
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+            enum: [pending, in_progress, completed, archived, null]
+        - name: photographerId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+        - name: hasDebt
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create a project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "201":
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get project by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectBody"
+      responses:
+        "200":
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /projects/{id}/notes:
+    get:
+      operationId: listProjectNotes
+      tags: [notes]
+      summary: List notes for a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+    post:
+      operationId: createProjectNote
+      tags: [notes]
+      summary: Add a note to a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNoteBody"
+      responses:
+        "201":
+          description: Note created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+
+  /notes/{id}:
+    delete:
+      operationId: deleteNote
+      tags: [notes]
+      summary: Delete a note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /services:
+    get:
+      operationId: listServices
+      tags: [analytics]
+      summary: List all services
+      responses:
+        "200":
+          description: List of services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+    post:
+      operationId: createService
+      tags: [analytics]
+      summary: Create a service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServiceBody"
+      responses:
+        "201":
+          description: Created service
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+
+  /services/{id}:
+    delete:
+      operationId: deleteService
+      tags: [analytics]
+      summary: Delete a service
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      tags: [analytics]
+      summary: Get financial summary
+      parameters:
+        - name: photographerId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Financial summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsSummary"
+
+  /analytics/projects-by-status:
+    get:
+      operationId: getProjectsByStatus
+      tags: [analytics]
+      summary: Get project count by status
+      parameters:
+        - name: photographerId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Project counts by status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StatusCount"
+
+  /analytics/debt-list:
+    get:
+      operationId: getDebtList
+      tags: [analytics]
+      summary: Get list of projects with outstanding debt
+      parameters:
+        - name: photographerId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+      responses:
+        "200":
+          description: Debt list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+
+  /workflow-templates:
+    get:
+      operationId: listWorkflowTemplates
+      tags: [workflow-templates]
+      summary: List all workflow templates with their milestones
+      responses:
+        "200":
+          description: List of workflow templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkflowTemplate"
+    post:
+      operationId: createWorkflowTemplate
+      tags: [workflow-templates]
+      summary: Create a new workflow template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkflowTemplateBody"
+      responses:
+        "201":
+          description: Created template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowTemplate"
+
+  /workflow-templates/{id}:
+    patch:
+      operationId: updateWorkflowTemplate
+      tags: [workflow-templates]
+      summary: Update a workflow template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkflowTemplateBody"
+      responses:
+        "200":
+          description: Updated template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkflowTemplate"
+    delete:
+      operationId: deleteWorkflowTemplate
+      tags: [workflow-templates]
+      summary: Delete a workflow template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /workflow-templates/{id}/milestones:
+    post:
+      operationId: addTemplateMilestone
+      tags: [workflow-templates]
+      summary: Add a milestone to a template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTemplateMilestoneBody"
+      responses:
+        "201":
+          description: Created milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateMilestone"
+
+  /workflow-templates/{id}/milestones/{milestoneId}:
+    patch:
+      operationId: updateTemplateMilestone
+      tags: [workflow-templates]
+      summary: Update a template milestone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: milestoneId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTemplateMilestoneBody"
+      responses:
+        "200":
+          description: Updated milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TemplateMilestone"
+    delete:
+      operationId: deleteTemplateMilestone
+      tags: [workflow-templates]
+      summary: Delete a template milestone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: milestoneId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /projects/{id}/milestones:
+    get:
+      operationId: listProjectMilestones
+      tags: [project-milestones]
+      summary: List milestones for a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of project milestones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectMilestone"
+    post:
+      operationId: createProjectMilestone
+      tags: [project-milestones]
+      summary: Add a milestone to a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectMilestoneBody"
+      responses:
+        "201":
+          description: Created milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectMilestone"
+
+  /projects/{id}/milestones/bulk:
+    post:
+      operationId: bulkCreateProjectMilestones
+      tags: [project-milestones]
+      summary: Bulk-add milestones to a project (from template)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                milestones:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/CreateProjectMilestoneBody"
+              required:
+                - milestones
+      responses:
+        "201":
+          description: Created milestones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectMilestone"
+
+  /projects/{id}/milestones/{milestoneId}:
+    patch:
+      operationId: updateProjectMilestone
+      tags: [project-milestones]
+      summary: Update a project milestone (title, order, isCompleted)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: milestoneId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectMilestoneBody"
+      responses:
+        "200":
+          description: Updated milestone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectMilestone"
+    delete:
+      operationId: deleteProjectMilestone
+      tags: [project-milestones]
+      summary: Delete a project milestone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: milestoneId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /leads:
+    get:
+      operationId: listLeads
+      tags: [leads]
+      summary: List all leads
+      responses:
+        "200":
+          description: List of leads
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lead"
+    post:
+      operationId: createLead
+      tags: [leads]
+      summary: Create a new lead
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLeadBody"
+      responses:
+        "201":
+          description: Created lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+
+  /leads/lost-reasons:
+    get:
+      operationId: listLostReasons
+      tags: [leads]
+      summary: List all distinct lost reasons
+      responses:
+        "200":
+          description: List of lost reasons
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /leads/{id}:
+    get:
+      operationId: getLead
+      tags: [leads]
+      summary: Get a lead by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+    patch:
+      operationId: updateLead
+      tags: [leads]
+      summary: Update a lead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLeadBody"
+      responses:
+        "200":
+          description: Updated lead
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+    delete:
+      operationId: deleteLead
+      tags: [leads]
+      summary: Delete a lead
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /leads/{id}/convert:
+    post:
+      operationId: convertLead
+      tags: [leads]
+      summary: Convert a lead to a client + project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Conversion result with new client and project IDs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  clientId:
+                    type: integer
+                  projectId:
+                    type: integer
+                  message:
+                    type: string
+                required:
+                  - clientId
+                  - projectId
+                  - message
+
+  /expenses:
+    get:
+      operationId: listExpenses
+      tags: [expenses]
+      summary: List all expenses
+      responses:
+        "200":
+          description: List of expenses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Expense"
+    post:
+      operationId: createExpense
+      tags: [expenses]
+      summary: Create a new expense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateExpenseBody"
+      responses:
+        "201":
+          description: Created expense
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+
+  /expenses/{id}:
+    patch:
+      operationId: updateExpense
+      tags: [expenses]
+      summary: Update an expense
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateExpenseBody"
+      responses:
+        "200":
+          description: Updated expense
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+    delete:
+      operationId: deleteExpense
+      tags: [expenses]
+      summary: Delete an expense
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /accounting/summary:
+    get:
+      operationId: getAccountingSummary
+      tags: [expenses]
+      summary: Get accounting summary (revenue vs expenses with monthly breakdown)
+      responses:
+        "200":
+          description: Accounting summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountingSummary"
+
+  /accounting/monthly:
+    get:
+      operationId: getMonthlyAccounting
+      tags: [expenses]
+      summary: Get detailed accounting data for a specific month
+      parameters:
+        - in: query
+          name: month
+          schema:
+            type: string
+          description: "Month in YYYY-MM format (defaults to current month)"
+      responses:
+        "200":
+          description: Monthly accounting details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyAccountingDetail"
+
+  /accounting/process-recurring/{month}:
+    post:
+      operationId: processRecurringExpenses
+      tags: [recurring-expenses]
+      summary: Auto-create expenses from active recurring templates for a month
+      parameters:
+        - name: month
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Processing result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProcessRecurringExpensesResponse"
+
+  /recurring-expenses:
+    get:
+      operationId: listRecurringExpenses
+      tags: [recurring-expenses]
+      summary: List all recurring expense templates
+      responses:
+        "200":
+          description: List of recurring expense templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecurringExpense"
+    post:
+      operationId: createRecurringExpense
+      tags: [recurring-expenses]
+      summary: Create a recurring expense template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateRecurringExpenseBody"
+      responses:
+        "201":
+          description: Created recurring expense template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecurringExpense"
+
+  /recurring-expenses/{id}:
+    patch:
+      operationId: updateRecurringExpense
+      tags: [recurring-expenses]
+      summary: Update a recurring expense template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateRecurringExpenseBody"
+      responses:
+        "200":
+          description: Updated recurring expense template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecurringExpense"
+    delete:
+      operationId: deleteRecurringExpense
+      tags: [recurring-expenses]
+      summary: Delete a recurring expense template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /payments:
+    get:
+      operationId: listPayments
+      tags: [payments]
+      summary: List payment history records
+      parameters:
+        - name: projectId
+          in: query
+          required: false
+          schema:
+            type: ["integer", "null"]
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: List of payments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Payment"
+    post:
+      operationId: createPayment
+      tags: [payments]
+      summary: Record a new payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePaymentBody"
+      responses:
+        "201":
+          description: Created payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+
+  /payments/summary:
+    get:
+      operationId: getPaymentsSummary
+      tags: [payments]
+      summary: Get payment totals grouped by currency
+      parameters:
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: ["string", "null"]
+      responses:
+        "200":
+          description: Payment summary by currency
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentCurrencySummary"
+
+  /payments/project/{projectId}:
+    get:
+      operationId: getProjectPayments
+      tags: [payments]
+      summary: Get payment history for a specific project
+      parameters:
+        - name: projectId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Project payments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectPayments"
+
+  /payments/{id}:
+    delete:
+      operationId: deletePayment
+      tags: [payments]
+      summary: Delete a payment record (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                required:
+                  - ok
+
+  /ai/enhance-proposal:
+    post:
+      operationId: enhanceProposal
+      tags: [ai]
+      summary: Enhance a client idea with AI to generate a professional proposal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EnhanceProposalBody"
+      responses:
+        "200":
+          description: AI-generated proposal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnhanceProposalResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+
+    LoginBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        message:
+          type: string
+      required:
+        - user
+        - message
+
+    UserPermissions:
+      type: object
+      properties:
+        canViewFinancials:
+          type: boolean
+        canManageClients:
+          type: boolean
+        canManageAllProjects:
+          type: boolean
+        canInvoice:
+          type: boolean
+        canViewLeads:
+          type: boolean
+        canViewAccounting:
+          type: boolean
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        name:
+          type: string
+        email:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [admin, photographer, client]
+        profession:
+          type: ["string", "null"]
+        paymentType:
+          type: string
+          enum: [monthly_salary, per_project]
+        salaryAmount:
+          type: ["number", "null"]
+        canViewFinancials:
+          type: boolean
+        canManageClients:
+          type: boolean
+        canManageAllProjects:
+          type: boolean
+        canInvoice:
+          type: boolean
+        canViewLeads:
+          type: boolean
+        canViewAccounting:
+          type: boolean
+        archivedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - username
+        - name
+        - role
+        - paymentType
+        - canViewFinancials
+        - canManageClients
+        - canManageAllProjects
+        - canInvoice
+        - canViewLeads
+        - canViewAccounting
+        - createdAt
+
+    CreateUserBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        name:
+          type: string
+        email:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [admin, photographer, client]
+        profession:
+          type: ["string", "null"]
+        paymentType:
+          type: string
+          enum: [monthly_salary, per_project]
+        salaryAmount:
+          type: ["number", "null"]
+        canViewFinancials:
+          type: boolean
+        canManageClients:
+          type: boolean
+        canManageAllProjects:
+          type: boolean
+        canInvoice:
+          type: boolean
+        canViewLeads:
+          type: boolean
+        canViewAccounting:
+          type: boolean
+      required:
+        - username
+        - password
+        - name
+        - role
+
+    UpdateUserBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        password:
+          type: ["string", "null"]
+        profession:
+          type: ["string", "null"]
+        paymentType:
+          type: ["string", "null"]
+        salaryAmount:
+          type: ["number", "null"]
+        canViewFinancials:
+          type: ["boolean", "null"]
+        canManageClients:
+          type: ["boolean", "null"]
+        canManageAllProjects:
+          type: ["boolean", "null"]
+        canInvoice:
+          type: ["boolean", "null"]
+        canViewLeads:
+          type: ["boolean", "null"]
+        canViewAccounting:
+          type: ["boolean", "null"]
+
+    Lead:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        estimatedValue:
+          type: ["number", "null"]
+        source:
+          type: string
+        status:
+          type: string
+          enum: [new, contacted, proposal_sent, negotiating, won, lost]
+        notes:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+        serviceId:
+          type: ["integer", "null"]
+        serviceName:
+          type: ["string", "null"]
+        lostReason:
+          type: ["string", "null"]
+        wonMonth:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - source
+        - status
+        - createdAt
+
+    CreateLeadBody:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        estimatedValue:
+          type: ["number", "null"]
+        source:
+          type: string
+        status:
+          type: string
+          enum: [new, contacted, proposal_sent, negotiating, won, lost]
+        notes:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+        serviceId:
+          type: ["integer", "null"]
+        lostReason:
+          type: ["string", "null"]
+        wonMonth:
+          type: ["string", "null"]
+      required:
+        - name
+        - source
+
+    UpdateLeadBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        estimatedValue:
+          type: ["number", "null"]
+        source:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+        serviceId:
+          type: ["integer", "null"]
+        lostReason:
+          type: ["string", "null"]
+        wonMonth:
+          type: ["string", "null"]
+
+    Expense:
+      type: object
+      properties:
+        id:
+          type: integer
+        category:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+        description:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - category
+        - amount
+        - date
+        - createdAt
+
+    CreateExpenseBody:
+      type: object
+      properties:
+        category:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+        description:
+          type: ["string", "null"]
+      required:
+        - category
+        - amount
+        - date
+
+    UpdateExpenseBody:
+      type: object
+      properties:
+        category:
+          type: ["string", "null"]
+        amount:
+          type: ["number", "null"]
+        date:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+
+    MonthlyFinancial:
+      type: object
+      properties:
+        month:
+          type: string
+        revenue:
+          type: number
+        expenses:
+          type: number
+      required:
+        - month
+        - revenue
+        - expenses
+
+    AccountingSummary:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+        totalExpenses:
+          type: number
+        netProfit:
+          type: number
+        revenueByCurrency:
+          type: object
+          additionalProperties:
+            type: number
+        monthly:
+          type: array
+          items:
+            $ref: "#/components/schemas/MonthlyFinancial"
+      required:
+        - totalRevenue
+        - totalExpenses
+        - netProfit
+        - revenueByCurrency
+        - monthly
+
+    ServiceRevenueItem:
+      type: object
+      properties:
+        serviceId:
+          type: ["integer", "null"]
+        serviceName:
+          type: string
+        revenue:
+          type: number
+        percentage:
+          type: number
+        projectCount:
+          type: integer
+      required:
+        - serviceName
+        - revenue
+        - percentage
+        - projectCount
+
+    MonthlyTransaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [revenue, expense]
+        name:
+          type: string
+        category:
+          type: ["string", "null"]
+        amount:
+          type: number
+        date:
+          type: string
+        currency:
+          type: ["string", "null"]
+      required:
+        - id
+        - type
+        - name
+        - amount
+        - date
+
+    TeamPayoutItem:
+      type: object
+      properties:
+        userId:
+          type: integer
+        name:
+          type: string
+        paymentType:
+          type: string
+          enum: [monthly_salary, per_project]
+        amount:
+          type: number
+        commissionType:
+          type: ["string", "null"]
+      required:
+        - userId
+        - name
+        - paymentType
+        - amount
+
+    TeamPayoutSummary:
+      type: object
+      properties:
+        totalSalaries:
+          type: number
+        totalPerProjectFees:
+          type: number
+        totalPayout:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeamPayoutItem"
+      required:
+        - totalSalaries
+        - totalPerProjectFees
+        - totalPayout
+        - items
+
+    MonthlyAccountingDetail:
+      type: object
+      properties:
+        month:
+          type: string
+        revenue:
+          type: number
+        revenueByCurrency:
+          type: object
+          additionalProperties:
+            type: number
+        projectCosts:
+          type: number
+        operatingExpenses:
+          type: number
+        expenses:
+          type: number
+        netProfit:
+          type: number
+        serviceBreakdown:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceRevenueItem"
+        transactions:
+          type: array
+          items:
+            $ref: "#/components/schemas/MonthlyTransaction"
+        teamPayouts:
+          $ref: "#/components/schemas/TeamPayoutSummary"
+      required:
+        - month
+        - revenue
+        - revenueByCurrency
+        - projectCosts
+        - operatingExpenses
+        - expenses
+        - netProfit
+        - serviceBreakdown
+        - transactions
+        - teamPayouts
+
+    Client:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        originalIdea:
+          type: ["string", "null"]
+        aiGeneratedIdea:
+          type: ["string", "null"]
+        proposedIdea:
+          type: ["string", "null"]
+        photographerId:
+          type: ["integer", "null"]
+        photographerName:
+          type: ["string", "null"]
+        userId:
+          type: ["integer", "null"]
+        loginUsername:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - createdAt
+
+    CreateClientBody:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        originalIdea:
+          type: ["string", "null"]
+        aiGeneratedIdea:
+          type: ["string", "null"]
+        proposedIdea:
+          type: ["string", "null"]
+        photographerId:
+          type: ["integer", "null"]
+        password:
+          type: ["string", "null"]
+      required:
+        - name
+
+    UpdateClientBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        originalIdea:
+          type: ["string", "null"]
+        aiGeneratedIdea:
+          type: ["string", "null"]
+        proposedIdea:
+          type: ["string", "null"]
+        photographerId:
+          type: ["integer", "null"]
+
+    EnhanceProposalBody:
+      type: object
+      properties:
+        originalIdea:
+          type: string
+        instructions:
+          type: string
+        language:
+          type: string
+          enum: [arabic, english, french]
+      required:
+        - originalIdea
+
+    EnhanceProposalResponse:
+      type: object
+      properties:
+        proposal:
+          type: string
+      required:
+        - proposal
+
+    ProjectAssignee:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        profession:
+          type: ["string", "null"]
+        role:
+          type: string
+        paymentType:
+          type: string
+          enum: [monthly_salary, per_project]
+        commissionType:
+          type: ["string", "null"]
+        commissionValue:
+          type: ["number", "null"]
+      required:
+        - id
+        - name
+        - role
+        - paymentType
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        clientId:
+          type: integer
+        clientName:
+          type: ["string", "null"]
+        photographerId:
+          type: ["integer", "null"]
+        photographerName:
+          type: ["string", "null"]
+        serviceId:
+          type: ["integer", "null"]
+        serviceName:
+          type: ["string", "null"]
+        assignees:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectAssignee"
+        status:
+          type: string
+          enum: [pending, in_progress, completed, archived]
+        progress:
+          type: integer
+        startDate:
+          type: ["string", "null"]
+        deliveryDate:
+          type: ["string", "null"]
+        weTransferLink:
+          type: ["string", "null"]
+        expectedCost:
+          type: ["number", "null"]
+        finalCost:
+          type: ["number", "null"]
+        amountPaid:
+          type: ["number", "null"]
+        remainingDebt:
+          type: ["number", "null"]
+        currency:
+          type: string
+          enum: [USD, EUR, DZD]
+        originalClientIdea:
+          type: ["string", "null"]
+        aiGeneratedSuggestion:
+          type: ["string", "null"]
+        finalProposedIdea:
+          type: ["string", "null"]
+        proformaIssuedAt:
+          type: ["string", "null"]
+        finalInvoiceIssuedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - clientId
+        - status
+        - progress
+        - createdAt
+
+    CreateProjectBody:
+      type: object
+      properties:
+        title:
+          type: string
+        clientId:
+          type: integer
+        photographerId:
+          type: ["integer", "null"]
+        serviceId:
+          type: ["integer", "null"]
+        assigneeIds:
+          type: array
+          items:
+            type: integer
+        status:
+          type: string
+          enum: [pending, in_progress, completed, archived]
+        progress:
+          type: integer
+          minimum: 0
+          maximum: 100
+        startDate:
+          type: ["string", "null"]
+        deliveryDate:
+          type: ["string", "null"]
+        weTransferLink:
+          type: ["string", "null"]
+        expectedCost:
+          type: ["number", "null"]
+          minimum: 0
+        finalCost:
+          type: ["number", "null"]
+          minimum: 0
+        amountPaid:
+          type: ["number", "null"]
+          minimum: 0
+        discount:
+          type: ["number", "null"]
+          minimum: 0
+        currency:
+          type: string
+          enum: [USD, EUR, DZD]
+        originalClientIdea:
+          type: ["string", "null"]
+        aiGeneratedSuggestion:
+          type: ["string", "null"]
+        finalProposedIdea:
+          type: ["string", "null"]
+        assigneeCommissions:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              commissionType:
+                type: string
+              commissionValue:
+                type: ["number", "null"]
+            required:
+              - commissionType
+      required:
+        - title
+        - clientId
+
+    UpdateProjectBody:
+      type: object
+      properties:
+        title:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+          enum: [pending, in_progress, completed, archived, null]
+        progress:
+          type: ["integer", "null"]
+          minimum: 0
+          maximum: 100
+        startDate:
+          type: ["string", "null"]
+        deliveryDate:
+          type: ["string", "null"]
+        weTransferLink:
+          type: ["string", "null"]
+        expectedCost:
+          type: ["number", "null"]
+          minimum: 0
+        finalCost:
+          type: ["number", "null"]
+          minimum: 0
+        amountPaid:
+          type: ["number", "null"]
+          minimum: 0
+        discount:
+          type: ["number", "null"]
+          minimum: 0
+        currency:
+          type: string
+          enum: [USD, EUR, DZD, null]
+        serviceId:
+          type: ["integer", "null"]
+        photographerId:
+          type: ["integer", "null"]
+        assigneeIds:
+          type: array
+          items:
+            type: integer
+        originalClientIdea:
+          type: ["string", "null"]
+        aiGeneratedSuggestion:
+          type: ["string", "null"]
+        finalProposedIdea:
+          type: ["string", "null"]
+        assigneeCommissions:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              commissionType:
+                type: string
+              commissionValue:
+                type: ["number", "null"]
+            required:
+              - commissionType
+
+    Note:
+      type: object
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        authorId:
+          type: ["integer", "null"]
+        authorName:
+          type: string
+        authorRole:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - projectId
+        - authorName
+        - authorRole
+        - content
+        - createdAt
+
+    CreateNoteBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content
+
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        amount:
+          type: number
+        currency:
+          type: string
+        paymentMethod:
+          type: ["string", "null"]
+        receiptNumber:
+          type: ["string", "null"]
+        paymentDate:
+          type: string
+        notes:
+          type: ["string", "null"]
+        recordedBy:
+          type: ["integer", "null"]
+        recorder:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            name:
+              type: ["string", "null"]
+            username:
+              type: ["string", "null"]
+        project:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: integer
+            title:
+              type: ["string", "null"]
+            currency:
+              type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - projectId
+        - amount
+        - currency
+        - paymentDate
+        - createdAt
+
+    CreatePaymentBody:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        amount:
+          type: number
+        currency:
+          type: string
+          enum: [DZD, USD, EUR]
+        paymentMethod:
+          type: ["string", "null"]
+        receiptNumber:
+          type: ["string", "null"]
+        paymentDate:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - projectId
+        - amount
+
+    PaymentCurrencySummary:
+      type: object
+      properties:
+        currency:
+          type: string
+        totalAmount:
+          type: number
+        paymentCount:
+          type: integer
+      required:
+        - currency
+        - totalAmount
+        - paymentCount
+
+    ProjectPayments:
+      type: object
+      properties:
+        project:
+          type: object
+          properties:
+            id:
+              type: integer
+            title:
+              type: string
+            finalCost:
+              type: ["number", "null"]
+            currency:
+              type: ["string", "null"]
+          required:
+            - id
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Payment"
+        summary:
+          type: object
+          properties:
+            totalPaid:
+              type: number
+            paymentCount:
+              type: integer
+            remainingBalance:
+              type: number
+          required:
+            - totalPaid
+            - paymentCount
+            - remainingBalance
+      required:
+        - project
+        - payments
+        - summary
+
+    AnalyticsSummary:
+      type: object
+      properties:
+        totalRevenue:
+          type: number
+        totalCollected:
+          type: number
+        totalDebt:
+          type: number
+        totalProjects:
+          type: integer
+        totalClients:
+          type: integer
+        completedProjects:
+          type: integer
+        ongoingProjects:
+          type: integer
+        revenueByCurrency:
+          type: object
+          additionalProperties:
+            type: number
+        invoicedByCurrency:
+          type: object
+          additionalProperties:
+            type: number
+        debtByCurrency:
+          type: object
+          additionalProperties:
+            type: number
+      required:
+        - totalRevenue
+        - totalCollected
+        - totalDebt
+        - totalProjects
+        - totalClients
+        - completedProjects
+        - ongoingProjects
+        - revenueByCurrency
+        - invoicedByCurrency
+        - debtByCurrency
+
+    StatusCount:
+      type: object
+      properties:
+        status:
+          type: string
+        count:
+          type: integer
+      required:
+        - status
+        - count
+
+    Service:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        price:
+          type: number
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - price
+        - createdAt
+
+    CreateServiceBody:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        price:
+          type: number
+      required:
+        - title
+        - price
+
+    TemplateMilestone:
+      type: object
+      properties:
+        id:
+          type: integer
+        templateId:
+          type: integer
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: integer
+        createdAt:
+          type: string
+      required:
+        - id
+        - templateId
+        - title
+        - order
+        - createdAt
+
+    WorkflowTemplate:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        milestones:
+          type: array
+          items:
+            $ref: "#/components/schemas/TemplateMilestone"
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - milestones
+        - createdAt
+
+    CreateWorkflowTemplateBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        milestones:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              titleAr:
+                type: ["string", "null"]
+              titleFr:
+                type: ["string", "null"]
+              description:
+                type: ["string", "null"]
+              order:
+                type: integer
+            required:
+              - title
+      required:
+        - name
+
+    UpdateWorkflowTemplateBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+
+    CreateTemplateMilestoneBody:
+      type: object
+      properties:
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: integer
+      required:
+        - title
+
+    ProjectMilestone:
+      type: object
+      properties:
+        id:
+          type: integer
+        projectId:
+          type: integer
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: integer
+        isCompleted:
+          type: boolean
+        completedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - projectId
+        - title
+        - order
+        - isCompleted
+        - createdAt
+
+    CreateProjectMilestoneBody:
+      type: object
+      properties:
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: integer
+      required:
+        - title
+
+    UpdateProjectMilestoneBody:
+      type: object
+      properties:
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: integer
+        isCompleted:
+          type: boolean
+
+    RecurringExpense:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        amount:
+          type: number
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - name
+        - category
+        - amount
+        - isActive
+        - createdAt
+
+    CreateRecurringExpenseBody:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        amount:
+          type: number
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+      required:
+        - name
+        - category
+        - amount
+
+    UpdateRecurringExpenseBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        category:
+          type: ["string", "null"]
+        amount:
+          type: ["number", "null"]
+        description:
+          type: ["string", "null"]
+        isActive:
+          type: ["boolean", "null"]
+
+    ProcessRecurringExpensesResponse:
+      type: object
+      properties:
+        month:
+          type: string
+        created:
+          type: integer
+        skipped:
+          type: integer
+      required:
+        - month
+        - created
+        - skipped

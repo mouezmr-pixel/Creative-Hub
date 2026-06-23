@@ -1,0 +1,722 @@
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782135798996,"name":"Error","message":"useLanguage must be used within a LanguageProvider","stack":"    at useLanguage D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx:663:1\n    at Accounting D:/Creative-Hub/artifacts/studio-crm/src/pages/accounting.tsx:128:17\n\n\n\n\n\n\n\n","loc":{"line":663,"column":1,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx"},"frame":"661|      </LanguageContext.Provider>\n662|    );\n663|  }\n   |  ^\n664|  \n665|  export function useLanguage() {"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137183240,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137185022,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137185431,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137185698,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137185707,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137185770,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782137195340,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:65:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[2m3:34:34 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (569:5)
+
+[0m [90m 567 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 568 |[31m       )}
+[31m[1m>[22m[31m[90m 569 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 570 |[31m   )[33m;[31m
+ [90m 571 |[31m }
+ [90m 572 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:569:5
+[33m  567 |          </div>
+  568 |        )}
+  569 |      </div>
+      |       ^
+  570 |    );
+  571 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:34:37 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (569:5)
+
+[0m [90m 567 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 568 |[39m       )}
+[31m[1m>[22m[39m[90m 569 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m     |[39m      [31m[1m^[22m[39m
+ [90m 570 |[39m   )[33m;[39m
+ [90m 571 |[39m }
+ [90m 572 |[39m[0m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:569:5
+[33m  567 |          </div>
+  568 |        )}
+  569 |      </div>
+      |       ^
+  570 |    );
+  571 |  }[39m
+[2m3:34:39 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (569:5)
+
+[0m [90m 567 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 568 |[31m       )}
+[31m[1m>[22m[31m[90m 569 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 570 |[31m   )[33m;[31m
+ [90m 571 |[31m }
+ [90m 572 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:569:5
+[33m  567 |          </div>
+  568 |        )}
+  569 |      </div>
+      |       ^
+  570 |    );
+  571 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:34:49 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 569 |[39m       )}
+[31m[1m>[22m[39m[90m 570 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m     |[39m      [31m[1m^[22m[39m
+ [90m 571 |[39m   )[33m;[39m
+ [90m 572 |[39m }
+ [90m 573 |[39m[0m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+[2m3:34:50 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 569 |[31m       )}
+[31m[1m>[22m[31m[90m 570 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 571 |[31m   )[33m;[31m
+ [90m 572 |[31m }
+ [90m 573 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:35:01 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 569 |[39m       )}
+[31m[1m>[22m[39m[90m 570 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m     |[39m      [31m[1m^[22m[39m
+ [90m 571 |[39m   )[33m;[39m
+ [90m 572 |[39m }
+ [90m 573 |[39m[0m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+[2m3:35:02 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 569 |[31m       )}
+[31m[1m>[22m[31m[90m 570 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 571 |[31m   )[33m;[31m
+ [90m 572 |[31m }
+ [90m 573 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:35:11 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 569 |[39m       )}
+[31m[1m>[22m[39m[90m 570 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m     |[39m      [31m[1m^[22m[39m
+ [90m 571 |[39m   )[33m;[39m
+ [90m 572 |[39m }
+ [90m 573 |[39m[0m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+[2m3:35:12 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 569 |[31m       )}
+[31m[1m>[22m[31m[90m 570 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 571 |[31m   )[33m;[31m
+ [90m 572 |[31m }
+ [90m 573 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:35:14 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 569 |[31m       )}
+[31m[1m>[22m[31m[90m 570 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 571 |[31m   )[33m;[31m
+ [90m 572 |[31m }
+ [90m 573 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:35:24 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[39m         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 569 |[39m       )}
+[31m[1m>[22m[39m[90m 570 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m     |[39m      [31m[1m^[22m[39m
+ [90m 571 |[39m   )[33m;[39m
+ [90m 572 |[39m }
+ [90m 573 |[39m[0m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+[2m3:35:25 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 569 |[31m       )}
+[31m[1m>[22m[31m[90m 570 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 571 |[31m   )[33m;[31m
+ [90m 572 |[31m }
+ [90m 573 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:35:27 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token (570:5)
+
+[0m [90m 568 |[31m         [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m 569 |[31m       )}
+[31m[1m>[22m[31m[90m 570 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+ [90m     |[31m      [31m[1m^[22m[31m
+ [90m 571 |[31m   )[33m;[31m
+ [90m 572 |[31m }
+ [90m 573 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:570:5
+[33m  568 |          </div>
+  569 |        )}
+  570 |      </div>
+      |       ^
+  571 |    );
+  572 |  }[39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.jsxParseIdentifier (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4581:12)
+      at TypeScriptParserMixin.jsxParseNamespacedName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4588:23)
+      at TypeScriptParserMixin.jsxParseElementName (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4597:21)
+      at TypeScriptParserMixin.jsxParseOpeningElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4673:22)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4698:33)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4774:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12912:23)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseModuleItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12761:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:36)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseProgram (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12639:10)
+      at TypeScriptParserMixin.parseTopLevel (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12629:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14505:25)
+      at TypeScriptParserMixin.parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10143:18)
+      at parse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:14539:38)
+      at parser (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\parser\index.js:41:34)
+      at parser.next (<anonymous>)
+      at normalizeFile (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\normalize-file.js:51:37)
+      at normalizeFile.next (<anonymous>)
+      at run (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transformation\index.js:22:50)
+      at run.next (<anonymous>)
+      at transform (D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\transform.js:22:33)
+      at transform.next (<anonymous>)
+      at step (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:261:32)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:273:13
+      at async.call.result.err.err (D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:223:11)
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:189:28
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+core@7.29.7\node_modules\@babel\core\lib\gensync-utils\async.js:67:7
+      at D:\Creative-Hub\node_modules\.pnpm\gensync@1.0.0-beta.2\node_modules\gensync\index.js:113:33
+[2m3:36:21 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token, expected "}" (568:3)
+
+[0m [90m 566 |[39m       )}
+ [90m 567 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+[31m[1m>[22m[39m[90m 568 |[39m   )[33m;[39m
+ [90m     |[39m    [31m[1m^[22m[39m
+ [90m 569 |[39m }
+ [90m 570 |[39m[0m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:568:3
+[33m  566 |        )}
+  567 |      </div>
+  568 |    );
+      |     ^
+  569 |  }
+  570 |  [39m
+[2m3:36:21 PM[22m [31m[1m[vite][22m[39m [31mInternal server error: D:\Creative-Hub\artifacts\studio-crm\src\pages\leads.tsx: Unexpected token, expected "}" (568:3)
+
+[0m [90m 566 |[31m       )}
+ [90m 567 |[31m     [33m<[31m[33m/[31m[33mdiv[31m[33m>[31m
+[31m[1m>[22m[31m[90m 568 |[31m   )[33m;[31m
+ [90m     |[31m    [31m[1m^[22m[31m
+ [90m 569 |[31m }
+ [90m 570 |[31m[0m[39m
+  Plugin: [35mvite:react-babel[39m
+  File: [36mD:/Creative-Hub/artifacts/studio-crm/src/pages/leads.tsx[39m:568:3
+[33m  566 |        )}
+  567 |      </div>
+  568 |    );
+      |     ^
+  569 |  }
+  570 |  [39m
+      at constructor (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:365:19)
+      at TypeScriptParserMixin.raise (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6616:19)
+      at TypeScriptParserMixin.unexpected (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6636:16)
+      at TypeScriptParserMixin.expect (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6916:12)
+      at TypeScriptParserMixin.jsxParseExpressionContainer (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4649:10)
+      at TypeScriptParserMixin.jsxParseElementAt (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4723:36)
+      at TypeScriptParserMixin.jsxParseElement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4761:17)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4771:19)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:39
+      at TypeScriptParserMixin.tryParse (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:6924:20)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9792:18)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10817:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12443:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10817:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12510:17)
+      at TypeScriptParserMixin.parseParenAndDistinguishExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11692:28)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11348:23)
+      at TypeScriptParserMixin.parseExprAtom (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:4776:20)
+      at TypeScriptParserMixin.parseExprSubscripts (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11098:23)
+      at TypeScriptParserMixin.parseUpdate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11083:21)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:11063:23)
+      at TypeScriptParserMixin.parseMaybeUnary (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9854:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10916:61)
+      at TypeScriptParserMixin.parseExprOps (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10921:23)
+      at TypeScriptParserMixin.parseMaybeConditional (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10898:23)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10848:21)
+      at TypeScriptParserMixin.parseMaybeAssign (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9803:20)
+      at TypeScriptParserMixin.parseExpressionBase (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10801:23)
+      at D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:39
+      at TypeScriptParserMixin.allowInAnd (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12438:16)
+      at TypeScriptParserMixin.parseExpression (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:10797:17)
+      at TypeScriptParserMixin.parseReturnStatement (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13159:28)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12815:21)
+      at TypeScriptParserMixin.parseStatementContent (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9525:18)
+      at TypeScriptParserMixin.parseStatementLike (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12784:17)
+      at TypeScriptParserMixin.parseStatementListItem (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12764:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13333:61)
+      at TypeScriptParserMixin.parseBlockBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13326:10)
+      at TypeScriptParserMixin.parseBlock (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:13314:10)
+      at TypeScriptParserMixin.parseFunctionBody (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12117:24)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:12103:10)
+      at TypeScriptParserMixin.parseFunctionBodyAndFinish (D:\Creative-Hub\node_modules\.pnpm\@babel+parser@7.29.7\node_modules\@babel\parser\lib\index.js:9189:18)
+[2m3:42:51 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /@fs/D:/Creative-Hub/lib/api-client-react/src/generated/api.ts (resolved id: D:/Creative-Hub/lib/api-client-react/src/generated/api.ts) in D:/Creative-Hub/lib/api-client-react/src/index.ts. Does the file exist?
+[2m3:42:51 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /@fs/D:/Creative-Hub/lib/api-client-react/src/generated/api.schemas.ts (resolved id: D:/Creative-Hub/lib/api-client-react/src/generated/api.schemas.ts) in D:/Creative-Hub/lib/api-client-react/src/index.ts. Does the file exist?
+[2m3:42:54 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /@fs/D:/Creative-Hub/lib/api-client-react/src/generated/api.ts (resolved id: D:/Creative-Hub/lib/api-client-react/src/generated/api.ts) in D:/Creative-Hub/lib/api-client-react/src/index.ts. Does the file exist?
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782139375842,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782139423685,"name":"Error","message":"useLanguage must be used within a LanguageProvider","stack":"    at useLanguage D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx:732:5\n    at Layout D:/Creative-Hub/artifacts/studio-crm/src/components/layout.tsx:38:40\n\n\n\n\n\n\n\n","loc":{"line":732,"column":5,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx"},"frame":"730|      <LanguageContext.Provider value={{ language, setLanguage, t, isRTL }}>\n731|        {children}\n732|      </LanguageContext.Provider>\n   |      ^\n733|    );\n734|  }"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782139429502,"name":"Error","message":"useLanguage must be used within a LanguageProvider","stack":"    at useLanguage D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx:747:11\n    at Layout D:/Creative-Hub/artifacts/studio-crm/src/components/layout.tsx:35:40\n\n\n\n\n\n\n\n","loc":{"line":747,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx"},"frame":"745|    const context = useContext(LanguageContext);\n746|    if (context === undefined) {\n747|      throw new Error(\"useLanguage must be used within a LanguageProvider\");\n   |            ^\n748|    }\n749|    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782139765106,"name":"Error","message":"useLanguage must be used within a LanguageProvider","stack":"    at useLanguage D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx:751:7\n    at Accounting D:/Creative-Hub/artifacts/studio-crm/src/pages/accounting.tsx:133:17\n\n\n\n\n\n\n\n","loc":{"line":751,"column":7,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/i18n.tsx"},"frame":"749|  export function useLanguage() {\n750|    const context = useContext(LanguageContext);\n751|    if (context === undefined) {\n   |        ^\n752|      throw new Error(\"useLanguage must be used within a LanguageProvider\");\n753|    }"}
+[2m3:50:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /@fs/D:/Creative-Hub/lib/api-client-react/src/generated/api.ts (resolved id: D:/Creative-Hub/lib/api-client-react/src/generated/api.ts) in D:/Creative-Hub/lib/api-client-react/src/index.ts. Does the file exist?
+[2m3:50:15 PM[22m [31m[1m[vite][22m[39m [31m[2m(client)[22m[39m Pre-transform error: Failed to load url /@fs/D:/Creative-Hub/lib/api-client-react/src/generated/api.schemas.ts (resolved id: D:/Creative-Hub/lib/api-client-react/src/generated/api.schemas.ts) in D:/Creative-Hub/lib/api-client-react/src/index.ts. Does the file exist?
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782139820489,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:74:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
+[RUNTIME_ERROR]{"type":"runtime-error","timestamp":1782139824632,"name":"Error","message":"useAuth must be used within an AuthProvider","stack":"    at useAuth D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx:60:11\n    at Router D:/Creative-Hub/artifacts/studio-crm/src/App.tsx:65:31\n\n\n\n\n\n\n\n","loc":{"line":60,"column":11,"file":"D:/Creative-Hub/artifacts/studio-crm/src/lib/auth.tsx"},"frame":"58 |    const context = useContext(AuthContext);\n59 |    if (context === undefined) {\n60 |      throw new Error(\"useAuth must be used within an AuthProvider\");\n   |            ^\n61 |    }\n62 |    return context;"}
