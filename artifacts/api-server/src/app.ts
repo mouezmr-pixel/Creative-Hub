@@ -1,6 +1,7 @@
 import express, { type Express } from "express";
 import path from "path";
 import cors from "cors";
+import helmet from "helmet";
 import pinoHttp from "pino-http";
 import session from "express-session";
 import connectPgSimple from "connect-pg-simple";
@@ -19,6 +20,11 @@ const app: Express = express();
 
 // Trust Replit's reverse proxy — critical for secure cookies over HTTPS
 app.set("trust proxy", 1);
+
+// Security headers: CSP, X-Frame-Options, X-Content-Type-Options, etc.
+app.use(helmet({
+  contentSecurityPolicy: false, // CSP disabled — frontend uses inline styles, shadcn/ui needs them
+}));
 
 app.use(
   pinoHttp({

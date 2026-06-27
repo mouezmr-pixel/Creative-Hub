@@ -314,7 +314,6 @@ router.post("/monthly-packages/:id/generate", async (req, res): Promise<void> =>
     console.error(`[POST /monthly-packages/${id}/generate]`, err);
     res.status(500).json({
       error: "Internal server error during generation",
-      detail: err?.detail || err?.message || String(err),
     });
   }
 });

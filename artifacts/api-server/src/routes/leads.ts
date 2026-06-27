@@ -179,8 +179,7 @@ router.post("/leads/:id/convert", async (req, res): Promise<void> => {
     clientId: client.id,
     projectId: project.id,
     username,
-    password: rawPassword,
-    message: `Lead converted! Client #${client.id} and Project #${project.id} created. Login: ${username} / ${rawPassword}`,
+    message: `Lead converted! Client #${client.id} and Project #${project.id} created. Username: ${username}. The client can set their password via the Client Accounts page.`,
   });
 });
 
