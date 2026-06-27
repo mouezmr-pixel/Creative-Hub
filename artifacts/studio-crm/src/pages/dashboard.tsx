@@ -95,7 +95,7 @@ export default function Dashboard() {
   const { data: allProjects } = useListProjects(baseParams);
   const { data: ongoingProjects } = useListProjects({ ...baseParams, status: "in_progress" });
   const { data: completedProjects } = useListProjects({ ...baseParams, status: "completed" });
-  const { data: debtProjects } = useListProjects({ ...baseParams, hasDebt: "true" });
+
   const { data: leads = [] } = useListLeads();
 
   const currentMonth = new Date();
@@ -136,7 +136,7 @@ export default function Dashboard() {
             key={project.id}
           >
             <Link href={`/projects/${project.id}`}>
-              <div className={`group flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-sm hover:border-primary/20 ${project.remainingDebt > 0 ? "border-l-4 border-l-rose-400 bg-rose-50/30 border-rose-200 dark:border-rose-800" : "bg-white dark:bg-slate-900 border-border hover:bg-slate-50/50"}`}>
+              <div className={`group flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all hover:shadow-sm hover:border-primary/20 bg-white dark:bg-slate-900 border-border hover:bg-slate-50/50`}>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate leading-tight">{project.title}</h3>
                   <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5 truncate">{project.clientName} · {project.photographerName}</p>
@@ -238,7 +238,7 @@ export default function Dashboard() {
       )}
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Revenue */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0, ease: [0.22, 1, 0.36, 1] }}>
           <Card className="bg-white dark:bg-slate-900 border-border shadow-sm hover:shadow-md transition-shadow h-full">
@@ -271,23 +271,7 @@ export default function Dashboard() {
           </Card>
         </motion.div>
 
-        {/* Debt */}
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14, ease: [0.22, 1, 0.36, 1] }}>
-          <Card className="bg-white dark:bg-slate-900 border-border shadow-sm hover:shadow-md transition-shadow h-full">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wider">{t("totalDebt")}</CardTitle>
-              <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950 flex items-center justify-center">
-                <AlertCircle className="h-4 w-4 text-rose-500 dark:text-rose-400" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CurrencyAmounts amounts={(analytics as any)?.debtByCurrency} colorClass="text-rose-600" />
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{t("outstandingDescription")}</p>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Projects */}
+{/* Projects */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.21, ease: [0.22, 1, 0.36, 1] }}>
           <Card className="bg-white dark:bg-slate-900 border-border shadow-sm hover:shadow-md transition-shadow h-full">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
@@ -312,12 +296,12 @@ export default function Dashboard() {
             <TabsTrigger value="all" className="rounded-lg text-sm">{t("all")}</TabsTrigger>
             <TabsTrigger value="ongoing" className="rounded-lg text-sm">{t("ongoing")}</TabsTrigger>
             <TabsTrigger value="completed" className="rounded-lg text-sm">{t("completed")}</TabsTrigger>
-            <TabsTrigger value="debt" className="rounded-lg text-sm">{t("debtList")}</TabsTrigger>
+
           </TabsList>
           <TabsContent value="all"><ProjectList projects={allProjects} /></TabsContent>
           <TabsContent value="ongoing"><ProjectList projects={ongoingProjects} /></TabsContent>
           <TabsContent value="completed"><ProjectList projects={completedProjects} /></TabsContent>
-          <TabsContent value="debt"><ProjectList projects={debtProjects} /></TabsContent>
+
         </Tabs>
       </div>
 

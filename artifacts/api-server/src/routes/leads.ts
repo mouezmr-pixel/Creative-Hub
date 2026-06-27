@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq, sql } from "drizzle-orm";
 import { db, leadsTable, clientsTable, projectsTable, usersTable, servicesTable } from "@workspace/db";
 import bcrypt from "bcrypt";
+import { requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
@@ -47,29 +48,14 @@ async function formatLead(lead: typeof leadsTable.$inferSelect) {
   };
 }
 
-async function checkAccess(req: any, res: any): Promise<boolean> {
-  const sessionData = req.session as Record<string, unknown>;
-  if (!sessionData.userId) {
-    res.status(401).json({ error: "Not authenticated" });
-    return false;
-  }
-  const userId = sessionData.userId as number;
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
-  if (!user || (user.role !== "admin" && !user.canViewLeads)) {
-    res.status(403).json({ error: "Access denied" });
-    return false;
-  }
-  return true;
-}
-
 router.get("/leads", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
   const leads = await db.select().from(leadsTable).orderBy(leadsTable.createdAt);
   res.json(await Promise.all(leads.map(formatLead)));
 });
 
 router.post("/leads", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
   const { name, phone, email, estimatedValue, source, status, notes, projectName, serviceId, lostReason, wonMonth } = req.body;
   if (!name || !source) {
     res.status(400).json({ error: "name and source are required" });
@@ -92,8 +78,21 @@ router.post("/leads", async (req, res): Promise<void> => {
   res.status(201).json(await formatLead(lead));
 });
 
+router.get("/leads/lost-reasons", async (req, res): Promise<void> => {
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
+  const rows = await db.select({ reason: leadsTable.lostReason }).from(leadsTable)
+    .where(sql`${leadsTable.lostReason} IS NOT NULL AND ${leadsTable.lostReason} != ''`)
+    .groupBy(leadsTable.lostReason)
+    .orderBy(leadsTable.lostReason);
+  const reasons = rows.map((r) => r.reason).filter(Boolean) as string[];
+  // Include some common defaults
+  const defaults = ["Not our ideal client", "Price too high", "No response", "Chose competitor", "Timing not right", "Other"];
+  const all = [...new Set([...defaults, ...reasons])];
+  res.json(all);
+});
+
 router.get("/leads/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
   const id = parseInt(req.params.id, 10);
   const [lead] = await db.select().from(leadsTable).where(eq(leadsTable.id, id));
   if (!lead) { res.status(404).json({ error: "Lead not found" }); return; }
@@ -101,7 +100,7 @@ router.get("/leads/:id", async (req, res): Promise<void> => {
 });
 
 router.patch("/leads/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
   const id = parseInt(req.params.id, 10);
   const { name, phone, email, estimatedValue, source, status, notes, projectName, serviceId, lostReason, wonMonth } = req.body;
   const updateData: Partial<typeof leadsTable.$inferInsert> = {};
@@ -126,28 +125,15 @@ router.patch("/leads/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/leads/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
   const id = parseInt(req.params.id, 10);
   await db.delete(leadsTable).where(eq(leadsTable.id, id));
   res.sendStatus(204);
 });
 
-router.get("/leads/lost-reasons", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
-  const rows = await db.select({ reason: leadsTable.lostReason }).from(leadsTable)
-    .where(sql`${leadsTable.lostReason} IS NOT NULL AND ${leadsTable.lostReason} != ''`)
-    .groupBy(leadsTable.lostReason)
-    .orderBy(leadsTable.lostReason);
-  const reasons = rows.map((r) => r.reason).filter(Boolean) as string[];
-  // Include some common defaults
-  const defaults = ["Not our ideal client", "Price too high", "No response", "Chose competitor", "Timing not right", "Other"];
-  const all = [...new Set([...defaults, ...reasons])];
-  res.json(all);
-});
-
 // Convert lead to client + project
 router.post("/leads/:id/convert", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewLeads"] }))) return;
   const id = parseInt(req.params.id, 10);
   const [lead] = await db.select().from(leadsTable).where(eq(leadsTable.id, id));
   if (!lead) { res.status(404).json({ error: "Lead not found" }); return; }

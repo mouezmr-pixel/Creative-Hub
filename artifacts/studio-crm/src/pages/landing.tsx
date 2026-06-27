@@ -55,11 +55,10 @@ function DashboardMockup() {
               <div className="h-7 w-7 rounded-lg bg-primary" />
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-3 gap-3 mb-4">
             {[
               { label: t("totalRevenue"), value: "$48.2K", color: "text-emerald-600", bg: "bg-emerald-50" },
               { label: t("totalCollected"), value: "$36.5K", color: "text-blue-600", bg: "bg-blue-50" },
-              { label: t("totalDebt"), value: "$11.7K", color: "text-rose-600", bg: "bg-rose-50" },
               { label: t("ongoing"), value: "24", color: "text-violet-600", bg: "bg-violet-50" },
             ].map((stat, i) => (
               <div key={i} className="bg-white dark:bg-slate-900 rounded-xl p-3 border border-border shadow-sm">
@@ -71,17 +70,17 @@ function DashboardMockup() {
           </div>
           <div className="bg-white dark:bg-slate-900 rounded-xl border border-border shadow-sm p-3">
             <div className="flex items-center gap-2 mb-3">
-              {[t("all"), t("ongoing"), t("completed"), t("debtList")].map((tab, i) => (
+              {[t("all"), t("ongoing"), t("completed")].map((tab, i) => (
                 <div key={i} className={`text-xs px-2.5 py-1 rounded-lg font-medium ${i === 0 ? "bg-primary text-white" : "text-slate-500 dark:text-slate-400 dark:text-slate-500"}`}>{tab}</div>
               ))}
             </div>
             <div className="space-y-2">
               {[
-                { name: "Wedding Laroche", client: "Marie Laroche", progress: 85, debt: false },
-                { name: "Corporate Headshots", client: "TechCorp Inc.", progress: 40, debt: true },
-                { name: "Family Portraits", client: "Ahmed Family", progress: 100, debt: false },
+                { name: "Wedding Laroche", client: "Marie Laroche", progress: 85 },
+                { name: "Corporate Headshots", client: "TechCorp Inc.", progress: 40 },
+                { name: "Family Portraits", client: "Ahmed Family", progress: 100 },
               ].map((project, i) => (
-                <div key={i} className={`flex items-center gap-3 p-2.5 rounded-lg border ${project.debt ? "border-rose-200 dark:border-rose-800 bg-rose-50/50" : "border-border"}`}>
+                <div key={i} className="flex items-center gap-3 p-2.5 rounded-lg border border-border">
                   <div className="flex-1 min-w-0">
                     <div className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">{project.name}</div>
                     <div className="text-[10px] text-slate-400 dark:text-slate-500">{project.client}</div>
@@ -95,8 +94,8 @@ function DashboardMockup() {
                       <div className={`h-full rounded-full ${project.progress === 100 ? "bg-emerald-500" : "bg-primary"}`} style={{ width: `${project.progress}%` }} />
                     </div>
                   </div>
-                  <div className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${project.debt ? "bg-rose-100 dark:bg-rose-900 text-rose-600 dark:text-rose-400" : project.progress === 100 ? "bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400" : "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"}`}>
-                    {project.debt ? t("debtList") : project.progress === 100 ? t("completed") : t("ongoing")}
+                  <div className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${project.progress === 100 ? "bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-400" : "bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400"}`}>
+                    {project.progress === 100 ? t("completed") : t("ongoing")}
                   </div>
                 </div>
               ))}

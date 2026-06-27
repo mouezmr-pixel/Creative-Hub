@@ -22,6 +22,12 @@ import {
   UserCog,
   Sun,
   Moon,
+  Receipt,
+  Megaphone,
+  Star,
+  CalendarCheck,
+  Wallet,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,14 +63,21 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const roleLabel = user.role === "admin" ? t("roleAdmin") : user.role === "photographer" ? t("rolePhotographer") : t("roleClient");
 
   const navItems = [
-    { label: t("dashboard"), icon: LayoutDashboard, href: "/dashboard", roles: ["admin", "photographer"], show: true },
-    { label: t("clientPortal"), icon: LayoutDashboard, href: "/client-portal", roles: ["client"], show: true },
-    { label: t("clients"), icon: Users, href: "/clients", roles: ["admin", "photographer"], show: true },
+    { label: t("dashboard"), icon: LayoutDashboard, href: "/dashboard", roles: ["admin"], show: true },
+    { label: t("yourProposals"), icon: FileText, href: "/client-portal#proposals", roles: ["client"], show: true },
+    { label: t("yourProjects"), icon: Briefcase, href: "/client-portal#projects", roles: ["client"], show: true },
+    { label: t("accountStatement"), icon: Wallet, href: "/client-portal#account-statement", roles: ["client"], show: true },
+    { label: t("clients"), icon: Users, href: "/clients", roles: ["admin"], show: true },
     { label: t("projects"), icon: Briefcase, href: "/projects", roles: ["admin", "photographer"], show: true },
-    { label: t("services"), icon: Layers, href: "/services", roles: ["admin", "photographer"], show: true },
-    { label: t("leads"), icon: TrendingUp, href: "/leads", roles: ["admin", "photographer"], show: canSeeLeads },
-    { label: t("accounting"), icon: Calculator, href: "/accounting", roles: ["admin", "photographer"], show: canSeeAccounting },
+    { label: t("myDues"), icon: Wallet, href: "/my-dues", roles: ["photographer"], show: true },
+    { label: t("services"), icon: Layers, href: "/services", roles: ["admin"], show: true },
+    { label: t("billing"), icon: Receipt, href: "/billing", roles: ["admin"], show: true },
+    { label: t("campaigns"), icon: Megaphone, href: "/campaigns", roles: ["admin"], show: true },
+    { label: t("celebrities"), icon: Star, href: "/celebrities", roles: ["admin"], show: true },
+    { label: t("leads"), icon: TrendingUp, href: "/leads", roles: ["admin"], show: canSeeLeads },
+    { label: t("accounting"), icon: Calculator, href: "/accounting", roles: ["admin"], show: canSeeAccounting },
     { label: t("photographers"), icon: Camera, href: "/photographers", roles: ["admin"], show: true },
+    { label: t("monthlyPackages"), icon: CalendarCheck, href: "/monthly-packages", roles: ["admin"], show: true },
     { label: t("workflows"), icon: Workflow, href: "/workflow-templates", roles: ["admin"], show: true },
     { label: t("clientAccounts"), icon: UserCog, href: "/client-accounts", roles: ["admin"], show: true },
     { label: t("settings"), icon: Settings, href: "/settings", roles: ["admin"], show: true },
@@ -73,13 +86,26 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const filteredNavItems = navItems.filter((item) => item.roles.includes(user.role) && item.show);
 
   const NavItem = ({ item, isCollapsed }: { item: typeof navItems[0]; isCollapsed: boolean }) => {
-    const isActive = location.startsWith(item.href);
+    const [, setLocation] = useLocation();
+    const [hrefBase, hash] = item.href.split("#");
+    const isActive = hash
+      ? location === hrefBase && window.location.hash === `#${hash}`
+      : location.startsWith(item.href);
+    const handleClick = () => {
+      setIsMobileMenuOpen(false);
+      if (hash) {
+        setLocation(hrefBase, { replace: false });
+        setTimeout(() => {
+          document.getElementById(hash)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      }
+    };
     const content = (
-      <Link href={item.href}>
+      hash ? (
         <button
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={handleClick}
           className={cn(
-            "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
+            "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group text-left",
             isActive
               ? "bg-primary text-white shadow-sm shadow-primary/25"
               : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -88,7 +114,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <item.icon className={cn("w-5 h-5 flex-shrink-0 transition-transform", isActive ? "text-white" : "text-slate-500 group-hover:text-slate-700")} />
           {!isCollapsed && <span className="truncate">{item.label}</span>}
         </button>
-      </Link>
+      ) : (
+        <Link href={item.href}>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className={cn(
+              "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group",
+              isActive
+                ? "bg-primary text-white shadow-sm shadow-primary/25"
+                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+            )}
+          >
+            <item.icon className={cn("w-5 h-5 flex-shrink-0 transition-transform", isActive ? "text-white" : "text-slate-500 group-hover:text-slate-700")} />
+            {!isCollapsed && <span className="truncate">{item.label}</span>}
+          </button>
+        </Link>
+      )
     );
 
     if (isCollapsed) {

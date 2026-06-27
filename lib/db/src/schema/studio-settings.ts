@@ -1,4 +1,4 @@
-import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, boolean, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -21,8 +21,8 @@ export const studioSettingsTable = pgTable("studio_settings", {
   // Branding assets
   logoUrl: text("logo_url").default(""),
   stampUrl: text("stamp_url").default(""),
-  showStamp: text("show_stamp").default("true"),
-  showSignature: text("show_signature").default("true"),
+  showStamp: boolean("show_stamp").default(true),
+  showSignature: boolean("show_signature").default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
@@ -46,7 +46,7 @@ export const updateStudioSettingsSchema = z.object({
   invoiceNotes: z.string().optional(),
   logoUrl: z.string().optional(),
   stampUrl: z.string().optional(),
-  showStamp: z.string().optional(),
-  showSignature: z.string().optional(),
+  showStamp: z.boolean().optional(),
+  showSignature: z.boolean().optional(),
 });
 export type UpdateStudioSettings = z.infer<typeof updateStudioSettingsSchema>;

@@ -10,7 +10,6 @@ import {
 } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { useLanguage } from "@/lib/i18n";
-import { formatCurrency } from "@/lib/currency";
 import { useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -197,7 +196,7 @@ export default function ClientDetail() {
           <div className="space-y-3">
             {clientProjects.map((project) => (
               <Link key={project.id} href={`/projects/${project.id}`}>
-                <Card className={`hover:bg-card/80 transition-colors cursor-pointer border-l-4 ${(project.remainingDebt ?? 0) > 0 ? "border-l-destructive" : "border-l-transparent"} bg-card/50 border-border/50`}>
+                <Card className="hover:bg-card/80 transition-colors cursor-pointer border-l-4 border-l-transparent bg-card/50 border-border/50">
                   <CardContent className="p-4 flex items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold truncate">{project.title}</h3>
@@ -210,11 +209,6 @@ export default function ClientDetail() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
-                      {(project.remainingDebt ?? 0) > 0 && (
-                        <span className="text-xs text-destructive font-medium">
-                          {formatCurrency(project.remainingDebt ?? 0, (project as any).currency ?? "DZD")} {t("dueLabel")}
-                        </span>
-                      )}
                       <Badge className={getStatusColor(project.status)} variant="outline">
                         {t(project.status as any) || project.status}
                       </Badge>

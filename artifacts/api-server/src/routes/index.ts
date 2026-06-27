@@ -15,6 +15,10 @@ import aiRouter from "./ai";
 import paymentsRouter from "./payments";
 import clientAccountsRouter from "./client-accounts";
 import settingsRouter from "./settings";
+import campaignsRouter from "./campaigns";
+import celebritiesRouter from "./celebrities";
+import celebrityOffersRouter from "./celebrity-offers";
+import monthlyPackagesRouter from "./monthly-packages";
 
 const router: IRouter = Router();
 
@@ -34,5 +38,9 @@ router.use(projectMilestonesRouter);
 router.use(aiRouter);
 router.use(paymentsRouter);
 router.use(settingsRouter);
+router.use(campaignsRouter);
+router.use(celebritiesRouter);
+router.use(celebrityOffersRouter);
+router.use(monthlyPackagesRouter);
 
 export default router;

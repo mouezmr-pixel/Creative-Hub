@@ -58,10 +58,11 @@ router.post("/auth/login", async (req, res): Promise<void> => {
     return;
   }
 
-  // Support both bcrypt hashes and legacy plaintext passwords
-  const isValidPassword = user.password.startsWith("$2")
-    ? await bcrypt.compare(password, user.password)
-    : user.password === password;
+  if (!user.password.startsWith("$2b")) {
+    res.status(500).json({ error: "Account configuration error. Contact admin." });
+    return;
+  }
+  const isValidPassword = await bcrypt.compare(password, user.password);
 
   if (!isValidPassword) {
     res.status(401).json({ error: "Invalid credentials" });

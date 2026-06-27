@@ -19,6 +19,7 @@ export async function getSessionUser(
   req: Request,
   res: Response,
 ): Promise<SessionUser | null> {
+  if ((res.locals as any).user) return (res.locals as any).user as SessionUser;
   const userId = getSessionUserId(req, res);
   if (userId == null) return null;
   const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
@@ -26,6 +27,7 @@ export async function getSessionUser(
     res.status(401).json({ error: "User not found" });
     return null;
   }
+  res.locals.user = user;
   return user;
 }
 
@@ -73,6 +75,47 @@ export async function requireFinancialAccess(
 }
 
 /**
+ * Unified access check: authenticate + verify role/permission.
+ *
+ * - Must be authenticated (401 if not).
+ * - Admin always passes regardless of other options.
+ * - If `allowedRoles` is set, user.role must be one of them.
+ * - If `requiredPermissions` is set, user must have at least one truthy
+ *   boolean field from the list (e.g. "canViewAccounting").
+ * - Both can be combined: pass if EITHER role matches OR permission held.
+ * - If neither option is set, any authenticated user passes (auth-only).
+ */
+export async function requireAccess(
+  req: Request,
+  res: Response,
+  options: {
+    allowedRoles?: string[];
+    requiredPermissions?: Array<keyof SessionUser>;
+    errorMessage?: string;
+  } = {},
+): Promise<SessionUser | null> {
+  const user = await getSessionUser(req, res);
+  if (!user) return null;
+
+  if (user.role === "admin") return user;
+
+  if (options.allowedRoles && options.allowedRoles.length > 0) {
+    if (options.allowedRoles.includes(user.role)) return user;
+  }
+
+  if (options.requiredPermissions && options.requiredPermissions.length > 0) {
+    const hasPermission = options.requiredPermissions.some(
+      (perm) => !!(user as any)[perm],
+    );
+    if (hasPermission) return user;
+  }
+
+  const msg = options.errorMessage ?? "Access denied";
+  res.status(403).json({ error: msg });
+  return null;
+}
+
+/**
  * Check if the current user can access a specific project.
  * Returns the project record if allowed, null + sends 401/403/404 otherwise.
  */
@@ -110,13 +153,6 @@ export async function requireProjectAccess(
 
   // Photographer → own project or in assignees
   if (project.photographerId === user.id) return project;
-  const [assigned] = await db
-    .select({ projectId: projectAssigneesTable.projectId })
-    .from(projectAssigneesTable)
-    .where(
-      eq(projectAssigneesTable.userId, user.id),
-    );
-  // Check if this specific project is in assignees
   const assignedRows = await db
     .select({ projectId: projectAssigneesTable.projectId })
     .from(projectAssigneesTable)

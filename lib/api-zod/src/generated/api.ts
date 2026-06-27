@@ -1605,3 +1605,801 @@ export const EnhanceProposalResponse = zod.object({
 })
 
 
+/**
+ * @summary List all campaigns
+ */
+export const ListCampaignsQueryParams = zod.object({
+  "status": zod.coerce.string().optional(),
+  "clientId": zod.coerce.number().optional()
+})
+
+export const ListCampaignsResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListCampaignsResponse = zod.array(ListCampaignsResponseItem)
+
+
+/**
+ * @summary Create a campaign
+ */
+export const CreateCampaignBody = zod.object({
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string().optional(),
+  "status": zod.string().optional(),
+  "clientId": zod.number().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish()
+})
+
+export const CreateCampaignResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Get campaign with services and milestones
+ */
+export const GetCampaignParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetCampaignResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}).and(zod.object({
+  "services": zod.array(zod.object({
+  "id": zod.number().optional(),
+  "campaignId": zod.number().optional(),
+  "serviceId": zod.number().optional(),
+  "customPrice": zod.number().nullish(),
+  "notes": zod.string().nullish()
+})).optional(),
+  "milestones": zod.array(zod.object({
+  "id": zod.number(),
+  "campaignId": zod.number(),
+  "title": zod.string(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number(),
+  "dueDate": zod.string().nullish(),
+  "isCompleted": zod.boolean(),
+  "completedAt": zod.string().nullish(),
+  "createdAt": zod.string()
+})).optional()
+}))
+
+
+/**
+ * @summary Update campaign
+ */
+export const UpdateCampaignParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateCampaignBody = zod.object({
+  "name": zod.string().nullish(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string().nullish(),
+  "status": zod.string().nullish(),
+  "clientId": zod.number().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean().nullish()
+})
+
+export const UpdateCampaignResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Delete campaign
+ */
+export const DeleteCampaignParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteCampaignResponse = zod.void()
+
+
+/**
+ * @summary Share campaign with client
+ */
+export const ShareCampaignParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const ShareCampaignResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Unshare campaign from client
+ */
+export const UnshareCampaignParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UnshareCampaignResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary List shared campaigns for client
+ */
+export const ListClientCampaignsResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "nameAr": zod.string().nullish(),
+  "nameFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "descriptionAr": zod.string().nullish(),
+  "descriptionFr": zod.string().nullish(),
+  "type": zod.string(),
+  "status": zod.string(),
+  "clientId": zod.number().nullish(),
+  "clientName": zod.string().nullish(),
+  "budget": zod.number().nullish(),
+  "startDate": zod.string().nullish(),
+  "endDate": zod.string().nullish(),
+  "coverImage": zod.string().nullish(),
+  "proposalContent": zod.string().nullish(),
+  "proposalContentAr": zod.string().nullish(),
+  "proposalContentFr": zod.string().nullish(),
+  "shared": zod.boolean(),
+  "sharedAt": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+}).and(zod.object({
+  "services": zod.array(zod.object({
+  "id": zod.number().optional(),
+  "campaignId": zod.number().optional(),
+  "serviceId": zod.number().optional(),
+  "customPrice": zod.number().nullish(),
+  "notes": zod.string().nullish()
+})).optional(),
+  "milestones": zod.array(zod.object({
+  "id": zod.number(),
+  "campaignId": zod.number(),
+  "title": zod.string(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number(),
+  "dueDate": zod.string().nullish(),
+  "isCompleted": zod.boolean(),
+  "completedAt": zod.string().nullish(),
+  "createdAt": zod.string()
+})).optional()
+}))
+export const ListClientCampaignsResponse = zod.array(ListClientCampaignsResponseItem)
+
+
+/**
+ * @summary List services for a campaign
+ */
+export const ListCampaignServicesParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const ListCampaignServicesResponseItem = zod.object({
+  "id": zod.number().optional(),
+  "campaignId": zod.number().optional(),
+  "serviceId": zod.number().optional(),
+  "customPrice": zod.number().nullish(),
+  "notes": zod.string().nullish()
+})
+export const ListCampaignServicesResponse = zod.array(ListCampaignServicesResponseItem)
+
+
+/**
+ * @summary Add a service to campaign
+ */
+export const AddCampaignServiceParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const AddCampaignServiceBody = zod.object({
+  "serviceId": zod.number(),
+  "customPrice": zod.number().nullish(),
+  "notes": zod.string().nullish()
+})
+
+export const AddCampaignServiceResponse = zod.object({
+  "id": zod.number().optional(),
+  "campaignId": zod.number().optional(),
+  "serviceId": zod.number().optional(),
+  "customPrice": zod.number().nullish(),
+  "notes": zod.string().nullish()
+})
+
+
+/**
+ * @summary Remove a service from campaign
+ */
+export const RemoveCampaignServiceParams = zod.object({
+  "id": zod.coerce.number(),
+  "serviceId": zod.coerce.number()
+})
+
+export const RemoveCampaignServiceResponse = zod.void()
+
+
+/**
+ * @summary List milestones for a campaign
+ */
+export const ListCampaignMilestonesParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const ListCampaignMilestonesResponseItem = zod.object({
+  "id": zod.number(),
+  "campaignId": zod.number(),
+  "title": zod.string(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number(),
+  "dueDate": zod.string().nullish(),
+  "isCompleted": zod.boolean(),
+  "completedAt": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+export const ListCampaignMilestonesResponse = zod.array(ListCampaignMilestonesResponseItem)
+
+
+/**
+ * @summary Add a milestone to campaign
+ */
+export const AddCampaignMilestoneParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const AddCampaignMilestoneBody = zod.object({
+  "title": zod.string(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number().nullish(),
+  "dueDate": zod.string().nullish()
+})
+
+export const AddCampaignMilestoneResponse = zod.object({
+  "id": zod.number(),
+  "campaignId": zod.number(),
+  "title": zod.string(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number(),
+  "dueDate": zod.string().nullish(),
+  "isCompleted": zod.boolean(),
+  "completedAt": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Update a milestone
+ */
+export const UpdateCampaignMilestoneParams = zod.object({
+  "id": zod.coerce.number(),
+  "milestoneId": zod.coerce.number()
+})
+
+export const UpdateCampaignMilestoneBody = zod.object({
+  "title": zod.string().nullish(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number().nullish(),
+  "dueDate": zod.string().nullish(),
+  "isCompleted": zod.boolean().nullish()
+})
+
+export const UpdateCampaignMilestoneResponse = zod.object({
+  "id": zod.number(),
+  "campaignId": zod.number(),
+  "title": zod.string(),
+  "titleAr": zod.string().nullish(),
+  "titleFr": zod.string().nullish(),
+  "description": zod.string().nullish(),
+  "order": zod.number(),
+  "dueDate": zod.string().nullish(),
+  "isCompleted": zod.boolean(),
+  "completedAt": zod.string().nullish(),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a milestone
+ */
+export const DeleteCampaignMilestoneParams = zod.object({
+  "id": zod.coerce.number(),
+  "milestoneId": zod.coerce.number()
+})
+
+export const DeleteCampaignMilestoneResponse = zod.void()
+
+
+/**
+ * @summary List all celebrities
+ */
+export const ListCelebritiesQueryParams = zod.object({
+  "search": zod.coerce.string().optional(),
+  "audience": zod.coerce.string().optional(),
+  "tag": zod.coerce.string().optional(),
+  "priceMin": zod.coerce.number().optional(),
+  "priceMax": zod.coerce.number().optional()
+})
+
+export const ListCelebritiesResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "image": zod.string().nullish(),
+  "audiences": zod.array(zod.string()).nullish(),
+  "interests": zod.array(zod.string()).nullish(),
+  "dateOfBirth": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "tags": zod.array(zod.string()).nullish(),
+  "priceMin": zod.number().nullish(),
+  "priceMax": zod.number().nullish(),
+  "bio": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+export const ListCelebritiesResponse = zod.array(ListCelebritiesResponseItem)
+
+
+/**
+ * @summary Create a celebrity
+ */
+export const CreateCelebrityBody = zod.object({
+  "name": zod.string(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "image": zod.string().nullish(),
+  "audiences": zod.array(zod.string()).nullish(),
+  "interests": zod.array(zod.string()).nullish(),
+  "dateOfBirth": zod.string().nullish(),
+  "tags": zod.array(zod.string()).nullish(),
+  "priceMin": zod.number().nullish(),
+  "priceMax": zod.number().nullish(),
+  "bio": zod.string().nullish()
+})
+
+export const CreateCelebrityResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "image": zod.string().nullish(),
+  "audiences": zod.array(zod.string()).nullish(),
+  "interests": zod.array(zod.string()).nullish(),
+  "dateOfBirth": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "tags": zod.array(zod.string()).nullish(),
+  "priceMin": zod.number().nullish(),
+  "priceMax": zod.number().nullish(),
+  "bio": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Get a celebrity
+ */
+export const GetCelebrityParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetCelebrityResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "image": zod.string().nullish(),
+  "audiences": zod.array(zod.string()).nullish(),
+  "interests": zod.array(zod.string()).nullish(),
+  "dateOfBirth": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "tags": zod.array(zod.string()).nullish(),
+  "priceMin": zod.number().nullish(),
+  "priceMax": zod.number().nullish(),
+  "bio": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Update a celebrity
+ */
+export const UpdateCelebrityParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateCelebrityBody = zod.object({
+  "name": zod.string().nullish(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "image": zod.string().nullish(),
+  "audiences": zod.array(zod.string()).nullish(),
+  "interests": zod.array(zod.string()).nullish(),
+  "dateOfBirth": zod.string().nullish(),
+  "tags": zod.array(zod.string()).nullish(),
+  "priceMin": zod.number().nullish(),
+  "priceMax": zod.number().nullish(),
+  "bio": zod.string().nullish()
+})
+
+export const UpdateCelebrityResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "phone": zod.string().nullish(),
+  "email": zod.string().nullish(),
+  "image": zod.string().nullish(),
+  "audiences": zod.array(zod.string()).nullish(),
+  "interests": zod.array(zod.string()).nullish(),
+  "dateOfBirth": zod.string().nullish(),
+  "age": zod.number().nullish(),
+  "tags": zod.array(zod.string()).nullish(),
+  "priceMin": zod.number().nullish(),
+  "priceMax": zod.number().nullish(),
+  "bio": zod.string().nullish(),
+  "createdAt": zod.string(),
+  "updatedAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a celebrity
+ */
+export const DeleteCelebrityParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteCelebrityResponse = zod.void()
+
+
+/**
+ * @summary List all monthly packages
+ */
+export const ListMonthlyPackagesResponseItem = zod.object({
+  "id": zod.number(),
+  "clientId": zod.number(),
+  "clientName": zod.string().nullish(),
+  "serviceId": zod.number().nullish(),
+  "title": zod.string(),
+  "currency": zod.string(),
+  "isActive": zod.boolean(),
+  "notes": zod.string().nullish(),
+  "totalBudget": zod.number(),
+  "items": zod.array(zod.object({
+  "id": zod.number(),
+  "packageId": zod.number(),
+  "title": zod.string(),
+  "price": zod.number(),
+  "displayOrder": zod.number()
+})),
+  "generatedMonths": zod.array(zod.string()),
+  "createdAt": zod.string()
+})
+export const ListMonthlyPackagesResponse = zod.array(ListMonthlyPackagesResponseItem)
+
+
+/**
+ * @summary Create a monthly package
+ */
+export const createMonthlyPackageBodyCurrencyDefault = `DZD`;
+export const createMonthlyPackageBodyIsActiveDefault = true;
+
+export const CreateMonthlyPackageBody = zod.object({
+  "clientId": zod.number(),
+  "serviceId": zod.number().nullish(),
+  "title": zod.string(),
+  "currency": zod.string().default(createMonthlyPackageBodyCurrencyDefault),
+  "isActive": zod.boolean().default(createMonthlyPackageBodyIsActiveDefault),
+  "notes": zod.string().nullish(),
+  "items": zod.array(zod.object({
+  "title": zod.string(),
+  "price": zod.number(),
+  "displayOrder": zod.number().optional()
+}))
+})
+
+export const CreateMonthlyPackageResponse = zod.object({
+  "id": zod.number(),
+  "clientId": zod.number(),
+  "clientName": zod.string().nullish(),
+  "serviceId": zod.number().nullish(),
+  "title": zod.string(),
+  "currency": zod.string(),
+  "isActive": zod.boolean(),
+  "notes": zod.string().nullish(),
+  "totalBudget": zod.number(),
+  "items": zod.array(zod.object({
+  "id": zod.number(),
+  "packageId": zod.number(),
+  "title": zod.string(),
+  "price": zod.number(),
+  "displayOrder": zod.number()
+})),
+  "generatedMonths": zod.array(zod.string()),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Generate projects for all active packages for a given month
+ */
+export const GenerateAllMonthlyPackagesBody = zod.object({
+  "month": zod.string().describe('YYYY-MM format e.g. 2026-07')
+})
+
+export const GenerateAllMonthlyPackagesResponse = zod.object({
+  "month": zod.string(),
+  "created": zod.number(),
+  "skipped": zod.number(),
+  "projects": zod.array(zod.object({
+
+}).passthrough())
+})
+
+
+/**
+ * @summary Get a single monthly package
+ */
+export const GetMonthlyPackageParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GetMonthlyPackageResponse = zod.object({
+  "id": zod.number(),
+  "clientId": zod.number(),
+  "clientName": zod.string().nullish(),
+  "serviceId": zod.number().nullish(),
+  "title": zod.string(),
+  "currency": zod.string(),
+  "isActive": zod.boolean(),
+  "notes": zod.string().nullish(),
+  "totalBudget": zod.number(),
+  "items": zod.array(zod.object({
+  "id": zod.number(),
+  "packageId": zod.number(),
+  "title": zod.string(),
+  "price": zod.number(),
+  "displayOrder": zod.number()
+})),
+  "generatedMonths": zod.array(zod.string()),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Update a monthly package
+ */
+export const UpdateMonthlyPackageParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateMonthlyPackageBody = zod.object({
+  "title": zod.string().optional(),
+  "serviceId": zod.number().nullish(),
+  "currency": zod.string().optional(),
+  "isActive": zod.boolean().optional(),
+  "notes": zod.string().nullish(),
+  "items": zod.array(zod.object({
+  "id": zod.number().nullish(),
+  "title": zod.string(),
+  "price": zod.number(),
+  "displayOrder": zod.number().optional()
+})).optional()
+})
+
+export const UpdateMonthlyPackageResponse = zod.object({
+  "id": zod.number(),
+  "clientId": zod.number(),
+  "clientName": zod.string().nullish(),
+  "serviceId": zod.number().nullish(),
+  "title": zod.string(),
+  "currency": zod.string(),
+  "isActive": zod.boolean(),
+  "notes": zod.string().nullish(),
+  "totalBudget": zod.number(),
+  "items": zod.array(zod.object({
+  "id": zod.number(),
+  "packageId": zod.number(),
+  "title": zod.string(),
+  "price": zod.number(),
+  "displayOrder": zod.number()
+})),
+  "generatedMonths": zod.array(zod.string()),
+  "createdAt": zod.string()
+})
+
+
+/**
+ * @summary Delete a monthly package
+ */
+export const DeleteMonthlyPackageParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const DeleteMonthlyPackageResponse = zod.object({
+  "message": zod.string()
+})
+
+
+/**
+ * @summary Generate project for one package for a given month
+ */
+export const GenerateMonthlyPackageParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const GenerateMonthlyPackageBody = zod.object({
+  "month": zod.string().describe('YYYY-MM format e.g. 2026-07')
+})
+
+export const GenerateMonthlyPackageResponse = zod.object({
+  "month": zod.string(),
+  "created": zod.number(),
+  "skipped": zod.number(),
+  "projects": zod.array(zod.object({
+
+}).passthrough())
+})
+
+

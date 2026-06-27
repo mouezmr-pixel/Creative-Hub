@@ -1,7 +1,7 @@
 import { Router, type IRouter } from "express";
 import { eq, asc } from "drizzle-orm";
 import { db, projectMilestonesTable, projectsTable, usersTable } from "@workspace/db";
-import { getSessionUser, requireProjectAccess } from "../middlewares/auth";
+import { requireProjectAccess, requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
@@ -45,14 +45,14 @@ router.get("/projects/:id/milestones", async (req, res): Promise<void> => {
 
 // Add milestone to project
 router.post("/projects/:id/milestones", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" }); return;
-  }
-
   const projectId = parseInt(req.params.id, 10);
+  if (isNaN(projectId)) { res.status(400).json({ error: "Invalid project id" }); return; }
+
+  const project = await requireProjectAccess(req, res, projectId);
+  if (!project) return;
+
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
+
   const { title, titleAr, titleFr, description, order } = req.body;
   if (!title) { res.status(400).json({ error: "title is required" }); return; }
 
@@ -75,14 +75,14 @@ router.post("/projects/:id/milestones", async (req, res): Promise<void> => {
 
 // Bulk-create milestones (from template)
 router.post("/projects/:id/milestones/bulk", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" }); return;
-  }
-
   const projectId = parseInt(req.params.id, 10);
+  if (isNaN(projectId)) { res.status(400).json({ error: "Invalid project id" }); return; }
+
+  const project = await requireProjectAccess(req, res, projectId);
+  if (!project) return;
+
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
+
   const { milestones } = req.body;
 
   if (!Array.isArray(milestones) || milestones.length === 0) {
@@ -109,14 +109,14 @@ router.post("/projects/:id/milestones/bulk", async (req, res): Promise<void> => 
 
 // Update a project milestone
 router.patch("/projects/:id/milestones/:milestoneId", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" }); return;
-  }
-
   const projectId = parseInt(req.params.id, 10);
+  if (isNaN(projectId)) { res.status(400).json({ error: "Invalid project id" }); return; }
+
+  const project = await requireProjectAccess(req, res, projectId);
+  if (!project) return;
+
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
+
   const milestoneId = parseInt(req.params.milestoneId, 10);
   const { title, titleAr, titleFr, description, order, isCompleted } = req.body;
 
@@ -144,14 +144,14 @@ router.patch("/projects/:id/milestones/:milestoneId", async (req, res): Promise<
 
 // Delete a project milestone
 router.delete("/projects/:id/milestones/:milestoneId", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" }); return;
-  }
-
   const projectId = parseInt(req.params.id, 10);
+  if (isNaN(projectId)) { res.status(400).json({ error: "Invalid project id" }); return; }
+
+  const project = await requireProjectAccess(req, res, projectId);
+  if (!project) return;
+
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
+
   const milestoneId = parseInt(req.params.milestoneId, 10);
   await db.delete(projectMilestonesTable).where(eq(projectMilestonesTable.id, milestoneId));
   await recalcProgress(projectId);

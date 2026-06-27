@@ -21,15 +21,12 @@ export const projectsTable = pgTable("projects", {
   amountPaid: numeric("amount_paid", { precision: 10, scale: 2 }),
   discount: numeric("discount", { precision: 10, scale: 2 }).default("0"),
   currency: text("currency").notNull().default("DZD"),
-  clientOriginalIdea: text("client_original_idea"),
-  teamProposal: text("team_proposal"),
-  aiInstructions: text("ai_instructions"),
-  aiEnhancedIdea: text("ai_enhanced_idea"),
   originalClientIdea: text("original_client_idea"),
   aiGeneratedSuggestion: text("ai_generated_suggestion"),
   finalProposedIdea: text("final_proposed_idea"),
   proformaIssuedAt: timestamp("proforma_issued_at", { withTimezone: true }),
   finalInvoiceIssuedAt: timestamp("final_invoice_issued_at", { withTimezone: true }),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

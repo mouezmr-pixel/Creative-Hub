@@ -1,33 +1,9 @@
 import { Router, type IRouter } from "express";
 import { eq, asc } from "drizzle-orm";
 import { db, workflowTemplatesTable, templateMilestonesTable } from "@workspace/db";
+import { requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
-
-async function requireAdmin(req: any, res: any): Promise<boolean> {
-  const sessionData = req.session as Record<string, unknown>;
-  if (!sessionData.userId) {
-    res.status(401).json({ error: "Not authenticated" });
-    return false;
-  }
-  const userId = sessionData.userId as number;
-  const { usersTable } = await import("@workspace/db");
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
-  if (!user || user.role !== "admin") {
-    res.status(403).json({ error: "Admin only" });
-    return false;
-  }
-  return true;
-}
-
-async function requireAuth(req: any, res: any): Promise<boolean> {
-  const sessionData = req.session as Record<string, unknown>;
-  if (!sessionData.userId) {
-    res.status(401).json({ error: "Not authenticated" });
-    return false;
-  }
-  return true;
-}
 
 function formatMilestone(m: typeof templateMilestonesTable.$inferSelect) {
   return {
@@ -59,7 +35,7 @@ async function getTemplateWithMilestones(templateId: number) {
 
 // List all templates (any authenticated user — needed for project create form)
 router.get("/workflow-templates", async (req, res): Promise<void> => {
-  if (!(await requireAuth(req, res))) return;
+  if (!(await requireAccess(req, res))) return;
   const templates = await db.select().from(workflowTemplatesTable).orderBy(asc(workflowTemplatesTable.id));
   const results = await Promise.all(templates.map((t) => getTemplateWithMilestones(t.id)));
   res.json(results.filter(Boolean));
@@ -67,7 +43,7 @@ router.get("/workflow-templates", async (req, res): Promise<void> => {
 
 // Create template (admin only)
 router.post("/workflow-templates", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const { name, description, milestones } = req.body;
   if (!name) { res.status(400).json({ error: "name is required" }); return; }
 
@@ -95,7 +71,7 @@ router.post("/workflow-templates", async (req, res): Promise<void> => {
 
 // Update template name/description
 router.patch("/workflow-templates/:id", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const id = parseInt(req.params.id, 10);
   const { name, description } = req.body;
   const updateData: any = {};
@@ -109,7 +85,7 @@ router.patch("/workflow-templates/:id", async (req, res): Promise<void> => {
 
 // Delete template + its milestones
 router.delete("/workflow-templates/:id", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const id = parseInt(req.params.id, 10);
   await db.delete(templateMilestonesTable).where(eq(templateMilestonesTable.templateId, id));
   await db.delete(workflowTemplatesTable).where(eq(workflowTemplatesTable.id, id));
@@ -118,7 +94,7 @@ router.delete("/workflow-templates/:id", async (req, res): Promise<void> => {
 
 // Add milestone to template
 router.post("/workflow-templates/:id/milestones", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const templateId = parseInt(req.params.id, 10);
   const { title, titleAr, titleFr, description, order } = req.body;
   if (!title) { res.status(400).json({ error: "title is required" }); return; }
@@ -140,7 +116,7 @@ router.post("/workflow-templates/:id/milestones", async (req, res): Promise<void
 
 // Update template milestone
 router.patch("/workflow-templates/:id/milestones/:milestoneId", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const milestoneId = parseInt(req.params.milestoneId, 10);
   const { title, titleAr, titleFr, description, order } = req.body;
   const updateData: any = {};
@@ -157,7 +133,7 @@ router.patch("/workflow-templates/:id/milestones/:milestoneId", async (req, res)
 
 // Delete template milestone
 router.delete("/workflow-templates/:id/milestones/:milestoneId", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const milestoneId = parseInt(req.params.milestoneId, 10);
   await db.delete(templateMilestonesTable).where(eq(templateMilestonesTable.id, milestoneId));
   res.sendStatus(204);

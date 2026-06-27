@@ -945,6 +945,338 @@ export interface ProcessRecurringExpensesResponse {
   skipped: number;
 }
 
+export interface Campaign {
+  id: number;
+  name: string;
+  /** @nullable */
+  nameAr?: string | null;
+  /** @nullable */
+  nameFr?: string | null;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  descriptionAr?: string | null;
+  /** @nullable */
+  descriptionFr?: string | null;
+  type: string;
+  status: string;
+  /** @nullable */
+  clientId?: number | null;
+  /** @nullable */
+  clientName?: string | null;
+  /** @nullable */
+  budget?: number | null;
+  /** @nullable */
+  startDate?: string | null;
+  /** @nullable */
+  endDate?: string | null;
+  /** @nullable */
+  coverImage?: string | null;
+  /** @nullable */
+  proposalContent?: string | null;
+  /** @nullable */
+  proposalContentAr?: string | null;
+  /** @nullable */
+  proposalContentFr?: string | null;
+  shared: boolean;
+  /** @nullable */
+  sharedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CampaignService {
+  id?: number;
+  campaignId?: number;
+  serviceId?: number;
+  /** @nullable */
+  customPrice?: number | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export interface CampaignMilestone {
+  id: number;
+  campaignId: number;
+  title: string;
+  /** @nullable */
+  titleAr?: string | null;
+  /** @nullable */
+  titleFr?: string | null;
+  /** @nullable */
+  description?: string | null;
+  order: number;
+  /** @nullable */
+  dueDate?: string | null;
+  isCompleted: boolean;
+  /** @nullable */
+  completedAt?: string | null;
+  createdAt: string;
+}
+
+export type CampaignDetail = Campaign & {
+  services?: CampaignService[];
+  milestones?: CampaignMilestone[];
+};
+
+export interface CreateCampaignBody {
+  name: string;
+  /** @nullable */
+  nameAr?: string | null;
+  /** @nullable */
+  nameFr?: string | null;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  descriptionAr?: string | null;
+  /** @nullable */
+  descriptionFr?: string | null;
+  type?: string;
+  status?: string;
+  /** @nullable */
+  clientId?: number | null;
+  /** @nullable */
+  budget?: number | null;
+  /** @nullable */
+  startDate?: string | null;
+  /** @nullable */
+  endDate?: string | null;
+  /** @nullable */
+  coverImage?: string | null;
+  /** @nullable */
+  proposalContent?: string | null;
+  /** @nullable */
+  proposalContentAr?: string | null;
+  /** @nullable */
+  proposalContentFr?: string | null;
+}
+
+export interface UpdateCampaignBody {
+  /** @nullable */
+  name?: string | null;
+  /** @nullable */
+  nameAr?: string | null;
+  /** @nullable */
+  nameFr?: string | null;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  descriptionAr?: string | null;
+  /** @nullable */
+  descriptionFr?: string | null;
+  /** @nullable */
+  type?: string | null;
+  /** @nullable */
+  status?: string | null;
+  /** @nullable */
+  clientId?: number | null;
+  /** @nullable */
+  budget?: number | null;
+  /** @nullable */
+  startDate?: string | null;
+  /** @nullable */
+  endDate?: string | null;
+  /** @nullable */
+  coverImage?: string | null;
+  /** @nullable */
+  proposalContent?: string | null;
+  /** @nullable */
+  proposalContentAr?: string | null;
+  /** @nullable */
+  proposalContentFr?: string | null;
+  /** @nullable */
+  shared?: boolean | null;
+}
+
+export interface AddCampaignServiceBody {
+  serviceId: number;
+  /** @nullable */
+  customPrice?: number | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export interface AddCampaignMilestoneBody {
+  title: string;
+  /** @nullable */
+  titleAr?: string | null;
+  /** @nullable */
+  titleFr?: string | null;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  order?: number | null;
+  /** @nullable */
+  dueDate?: string | null;
+}
+
+export interface UpdateCampaignMilestoneBody {
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  titleAr?: string | null;
+  /** @nullable */
+  titleFr?: string | null;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  order?: number | null;
+  /** @nullable */
+  dueDate?: string | null;
+  /** @nullable */
+  isCompleted?: boolean | null;
+}
+
+export interface Celebrity {
+  id: number;
+  name: string;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  email?: string | null;
+  /** @nullable */
+  image?: string | null;
+  /** @nullable */
+  audiences?: string[] | null;
+  /** @nullable */
+  interests?: string[] | null;
+  /** @nullable */
+  dateOfBirth?: string | null;
+  /** @nullable */
+  age?: number | null;
+  /** @nullable */
+  tags?: string[] | null;
+  /** @nullable */
+  priceMin?: number | null;
+  /** @nullable */
+  priceMax?: number | null;
+  /** @nullable */
+  bio?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCelebrityBody {
+  name: string;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  email?: string | null;
+  /** @nullable */
+  image?: string | null;
+  /** @nullable */
+  audiences?: string[] | null;
+  /** @nullable */
+  interests?: string[] | null;
+  /** @nullable */
+  dateOfBirth?: string | null;
+  /** @nullable */
+  tags?: string[] | null;
+  /** @nullable */
+  priceMin?: number | null;
+  /** @nullable */
+  priceMax?: number | null;
+  /** @nullable */
+  bio?: string | null;
+}
+
+export interface UpdateCelebrityBody {
+  /** @nullable */
+  name?: string | null;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  email?: string | null;
+  /** @nullable */
+  image?: string | null;
+  /** @nullable */
+  audiences?: string[] | null;
+  /** @nullable */
+  interests?: string[] | null;
+  /** @nullable */
+  dateOfBirth?: string | null;
+  /** @nullable */
+  tags?: string[] | null;
+  /** @nullable */
+  priceMin?: number | null;
+  /** @nullable */
+  priceMax?: number | null;
+  /** @nullable */
+  bio?: string | null;
+}
+
+export interface MonthlyPackageItem {
+  id: number;
+  packageId: number;
+  title: string;
+  price: number;
+  displayOrder: number;
+}
+
+export interface MonthlyPackage {
+  id: number;
+  clientId: number;
+  /** @nullable */
+  clientName?: string | null;
+  /** @nullable */
+  serviceId?: number | null;
+  title: string;
+  currency: string;
+  isActive: boolean;
+  /** @nullable */
+  notes?: string | null;
+  totalBudget: number;
+  items: MonthlyPackageItem[];
+  generatedMonths: string[];
+  createdAt: string;
+}
+
+export type CreateMonthlyPackageBodyItemsItem = {
+  title: string;
+  price: number;
+  displayOrder?: number;
+};
+
+export interface CreateMonthlyPackageBody {
+  clientId: number;
+  /** @nullable */
+  serviceId?: number | null;
+  title: string;
+  currency?: string;
+  isActive?: boolean;
+  /** @nullable */
+  notes?: string | null;
+  items: CreateMonthlyPackageBodyItemsItem[];
+}
+
+export type UpdateMonthlyPackageBodyItemsItem = {
+  /** @nullable */
+  id?: number | null;
+  title: string;
+  price: number;
+  displayOrder?: number;
+};
+
+export interface UpdateMonthlyPackageBody {
+  title?: string;
+  /** @nullable */
+  serviceId?: number | null;
+  currency?: string;
+  isActive?: boolean;
+  /** @nullable */
+  notes?: string | null;
+  items?: UpdateMonthlyPackageBodyItemsItem[];
+}
+
+export type GeneratePackageResponseProjectsItem = { [key: string]: unknown };
+
+export interface GeneratePackageResponse {
+  month: string;
+  created: number;
+  skipped: number;
+  projects: GeneratePackageResponseProjectsItem[];
+}
+
 export type ListClientsParams = {
 /**
  * @nullable
@@ -1051,5 +1383,79 @@ endDate?: string | null;
 
 export type DeletePayment200 = {
   ok: boolean;
+};
+
+export type ListCampaignsParams = {
+status?: string;
+clientId?: number;
+};
+
+export type ListCelebritiesParams = {
+search?: string;
+audience?: string;
+tag?: string;
+priceMin?: number;
+priceMax?: number;
+};
+
+export interface CelebrityOffer {
+  id: number;
+  celebrityId: number;
+  title: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  budget?: number | null;
+  status: string;
+  /** @nullable */
+  scenario?: string | null;
+  /** @nullable */
+  script?: string | null;
+  /** @nullable */
+  idea?: string | null;
+  /** @nullable */
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateCelebrityOfferBody {
+  celebrityId: number;
+  title: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  budget?: number | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export interface UpdateCelebrityOfferBody {
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  budget?: number | null;
+  /** @nullable */
+  status?: string | null;
+  /** @nullable */
+  scenario?: string | null;
+  /** @nullable */
+  script?: string | null;
+  /** @nullable */
+  idea?: string | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
+export type GenerateAllMonthlyPackagesBody = {
+  /** YYYY-MM format e.g. 2026-07 */
+  month: string;
+};
+
+export type GenerateMonthlyPackageBody = {
+  /** YYYY-MM format e.g. 2026-07 */
+  month: string;
 };
 

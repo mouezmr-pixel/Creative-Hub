@@ -10,7 +10,7 @@ import {
   ListClientsQueryParams,
 } from "@workspace/api-zod";
 import bcrypt from "bcrypt";
-import { getSessionUser } from "../middlewares/auth";
+import { requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
@@ -62,23 +62,14 @@ async function formatClient(client: typeof clientsTable.$inferSelect) {
 }
 
 router.get("/clients", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"] });
   if (!user) return;
-
-  // Clients have no access to the clients API
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" });
-    return;
-  }
 
   const qp = ListClientsQueryParams.safeParse(req.query);
   let query = db.select().from(clientsTable).$dynamic();
 
   if (qp.success && qp.data.photographerId != null) {
     query = query.where(eq(clientsTable.photographerId, qp.data.photographerId));
-  } else if (user.role !== "admin" && !user.canManageAllProjects) {
-    // Photographers without canManageAllProjects only see their own clients
-    query = query.where(eq(clientsTable.photographerId, user.id));
   }
 
   const clients = await query.orderBy(clientsTable.createdAt);
@@ -87,13 +78,8 @@ router.get("/clients", async (req, res): Promise<void> => {
 });
 
 router.post("/clients", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"] });
   if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" });
-    return;
-  }
 
   const parsed = CreateClientBody.safeParse(req.body);
   if (!parsed.success) {
@@ -137,13 +123,8 @@ router.post("/clients", async (req, res): Promise<void> => {
 });
 
 router.get("/clients/:id", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"] });
   if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" });
-    return;
-  }
 
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const params = GetClientParams.safeParse({ id: parseInt(raw, 10) });
@@ -160,26 +141,13 @@ router.get("/clients/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  // Photographers without canManageAllProjects can only access their own clients
-  if (user.role !== "admin" && !user.canManageAllProjects) {
-    if (client.photographerId !== user.id) {
-      res.status(403).json({ error: "Access denied" });
-      return;
-    }
-  }
-
   const formatted = await formatClient(client);
   res.json(formatted);
 });
 
 router.patch("/clients/:id", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"] });
   if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" });
-    return;
-  }
 
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const params = UpdateClientParams.safeParse({ id: parseInt(raw, 10) });
@@ -200,14 +168,6 @@ router.patch("/clients/:id", async (req, res): Promise<void> => {
   if (!existing) {
     res.status(404).json({ error: "Client not found" });
     return;
-  }
-
-  // Photographers without canManageAllProjects can only edit their own clients
-  if (user.role !== "admin" && !user.canManageAllProjects) {
-    if (existing.photographerId !== user.id) {
-      res.status(403).json({ error: "Access denied" });
-      return;
-    }
   }
 
   const updateData: Partial<typeof clientsTable.$inferInsert> = {};
@@ -233,31 +193,14 @@ router.patch("/clients/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/clients/:id", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"] });
   if (!user) return;
-
-  if (user.role === "client") {
-    res.status(403).json({ error: "Access denied" });
-    return;
-  }
 
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const params = DeleteClientParams.safeParse({ id: parseInt(raw, 10) });
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
-  }
-
-  // Photographers without canManageAllProjects can only delete their own clients
-  if (user.role !== "admin" && !user.canManageAllProjects) {
-    const [existing] = await db
-      .select({ photographerId: clientsTable.photographerId })
-      .from(clientsTable)
-      .where(eq(clientsTable.id, params.data.id));
-    if (!existing || existing.photographerId !== user.id) {
-      res.status(403).json({ error: "Access denied" });
-      return;
-    }
   }
 
   await db.delete(clientsTable).where(eq(clientsTable.id, params.data.id));

@@ -27,7 +27,7 @@ interface StudioSettings {
   invoicePrefix: string; proformaPrefix: string;
   paymentTerms: string; invoiceFooter: string; invoiceNotes: string;
   logoUrl: string; stampUrl: string;
-  showStamp: string; showSignature: string;
+  showStamp: boolean; showSignature: boolean;
 }
 
 async function fetchSettings(): Promise<StudioSettings> {
@@ -124,8 +124,8 @@ export default function Settings() {
       setInvoiceNotes(studio.invoiceNotes ?? "");
       setLogoUrl(studio.logoUrl ?? "");
       setStampUrl(studio.stampUrl ?? "");
-      setShowStamp(studio.showStamp !== "false");
-      setShowSignature(studio.showSignature !== "false");
+      setShowStamp(studio.showStamp !== false);
+      setShowSignature(studio.showSignature !== false);
     }
   }, [studio]);
 
@@ -152,11 +152,11 @@ export default function Settings() {
   };
 
   const handleBrandSave = () => {
-    invoiceSaveMutation.mutate({ logoUrl, stampUrl, showStamp: showStamp ? "true" : "false", showSignature: showSignature ? "true" : "false" });
+    invoiceSaveMutation.mutate({ logoUrl, stampUrl, showStamp, showSignature });
   };
 
   const handleInvoiceSave = () => {
-    invoiceSaveMutation.mutate({ address, phone, email, website, taxId, invoicePrefix, proformaPrefix, paymentTerms, invoiceFooter, invoiceNotes, logoUrl, stampUrl, showStamp: showStamp ? "true" : "false", showSignature: showSignature ? "true" : "false" });
+    invoiceSaveMutation.mutate({ address, phone, email, website, taxId, invoicePrefix, proformaPrefix, paymentTerms, invoiceFooter, invoiceNotes, logoUrl, stampUrl, showStamp, showSignature });
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

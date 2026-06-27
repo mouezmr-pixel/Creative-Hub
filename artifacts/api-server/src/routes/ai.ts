@@ -131,7 +131,7 @@ Please create a professional creative proposal based on this. Remember: write EN
 
     const message = await anthropic.messages.create({
       model: "claude-haiku-4-5",
-      max_tokens: 8192,
+      max_tokens: 1024,
       messages: [{ role: "user", content: userPrompt }],
       system: systemPrompt,
     });

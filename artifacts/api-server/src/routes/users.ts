@@ -9,7 +9,7 @@ import {
   DeleteUserParams,
 } from "@workspace/api-zod";
 import bcrypt from "bcrypt";
-import { requireAdmin } from "../middlewares/auth";
+import { requireAccess } from "../middlewares/auth";
 
 const SALT_ROUNDS = 10;
 
@@ -37,14 +37,14 @@ function formatUser(user: typeof usersTable.$inferSelect) {
 }
 
 router.get("/users", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   // Return all users including archived so admin can see them
   const users = await db.select().from(usersTable).orderBy(usersTable.createdAt);
   res.json(users.map(formatUser));
 });
 
 router.post("/users", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const parsed = CreateUserBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -70,7 +70,7 @@ router.post("/users", async (req, res): Promise<void> => {
 });
 
 router.get("/users/:id", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const params = GetUserParams.safeParse({ id: parseInt(raw, 10) });
   if (!params.success) {
@@ -89,7 +89,7 @@ router.get("/users/:id", async (req, res): Promise<void> => {
 });
 
 router.patch("/users/:id", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const params = UpdateUserParams.safeParse({ id: parseInt(raw, 10) });
   if (!params.success) {
@@ -137,7 +137,7 @@ router.patch("/users/:id", async (req, res): Promise<void> => {
 
 // Unarchive: clears archivedAt so the user can log in again.
 router.post("/users/:id/unarchive", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const id = parseInt(req.params.id, 10);
   if (Number.isNaN(id)) {
     res.status(400).json({ error: "Invalid id" });
@@ -159,7 +159,7 @@ router.post("/users/:id/unarchive", async (req, res): Promise<void> => {
 // This preserves FK integrity on project_assignees (RESTRICT) and keeps
 // commission/financial history intact. Archived users cannot log in.
 router.delete("/users/:id", async (req, res): Promise<void> => {
-  if (!(await requireAdmin(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const raw = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const params = DeleteUserParams.safeParse({ id: parseInt(raw, 10) });
   if (!params.success) {

@@ -2,7 +2,7 @@ import { Router, type IRouter } from "express";
 import { eq, sql, and, gte, lte, inArray } from "drizzle-orm";
 import { db, projectsTable, clientsTable, usersTable, paymentHistoryTable, expensesTable, projectAssigneesTable } from "@workspace/db";
 import { GetAnalyticsSummaryQueryParams, GetProjectsByStatusQueryParams, GetDebtListQueryParams } from "@workspace/api-zod";
-import { getSessionUser, buildProjectScopeConditions } from "../middlewares/auth";
+import { getSessionUser, buildProjectScopeConditions, requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
@@ -124,13 +124,11 @@ router.get("/analytics/summary", async (req, res): Promise<void> => {
 
   // Total revenue = sum of finalCost for ALL projects with a final cost
   const totalRevenueByCurrency: Record<string, number> = {};
-  let totalRevenue = 0;
   for (const project of projects) {
     const finalCost = project.finalCost ? parseFloat(project.finalCost as unknown as string) : 0;
     if (finalCost <= 0) continue;
     const cur = project.currency ?? "DZD";
     totalRevenueByCurrency[cur] = (totalRevenueByCurrency[cur] ?? 0) + finalCost;
-    totalRevenue += finalCost;
   }
 
   // Invoiced and debt grouped by project currency
@@ -169,8 +167,15 @@ router.get("/analytics/summary", async (req, res): Promise<void> => {
 
   const collectionRate = invoicedAmount > 0 ? (actualRevenue / invoicedAmount) * 100 : 0;
   const debtPercentage = invoicedAmount > 0 ? (totalDebt / invoicedAmount) * 100 : 0;
-  const netProfit = actualRevenue - expensesTotal;
-  const profitMargin = actualRevenue > 0 ? (netProfit / actualRevenue) * 100 : 0;
+
+  const expensesByCurrency: Record<string, number> = { DZD: expensesTotal };
+  const netProfitByCurrency: Record<string, number> = {};
+  const profitMarginByCurrency: Record<string, number> = {};
+  for (const [cur, rev] of Object.entries(revenueByCurrency)) {
+    const net = rev - (cur === "DZD" ? expensesTotal : 0);
+    netProfitByCurrency[cur] = Math.round(net * 100) / 100;
+    profitMarginByCurrency[cur] = rev > 0 ? Math.round((net / rev) * 10000) / 100 : 0;
+  }
 
   const safe = (v: number) => (canViewFinancials ? v : 0);
 
@@ -178,28 +183,19 @@ router.get("/analytics/summary", async (req, res): Promise<void> => {
     canViewFinancials ? map : {};
 
   res.json({
-    totalRevenue: safe(totalRevenue),
-    totalCollected: safe(actualRevenue),
-    totalDebt: safe(totalDebt),
-    totalProjects: projects.length,
-    totalClients,
-    completedProjects,
-    ongoingProjects,
     totalRevenueByCurrency: safeByCurrency(totalRevenueByCurrency),
     revenueByCurrency: safeByCurrency(revenueByCurrency),
     invoicedByCurrency: safeByCurrency(invoicedByCurrency),
     debtByCurrency: safeByCurrency(debtByCurrency),
-    revenue: {
-      actual: safe(actualRevenue),
-      invoiced: safe(invoicedAmount),
-      collectionRate: collectionRate.toFixed(2),
-    },
-    debt: {
-      total: safe(totalDebt),
-      percentage: debtPercentage.toFixed(2),
-    },
-    expenses: { total: safe(expensesTotal) },
-    profit: { net: safe(netProfit), margin: profitMargin.toFixed(2) },
+    expensesByCurrency: safeByCurrency(expensesByCurrency),
+    netProfitByCurrency: safeByCurrency(netProfitByCurrency),
+    profitMarginByCurrency: safeByCurrency(profitMarginByCurrency),
+    collectionRate: collectionRate.toFixed(2),
+    debtPercentage: debtPercentage.toFixed(2),
+    totalProjects: projects.length,
+    totalClients,
+    completedProjects,
+    ongoingProjects,
     projects: {
       total: projects.length,
       pending: pendingProjects,
@@ -211,14 +207,8 @@ router.get("/analytics/summary", async (req, res): Promise<void> => {
 });
 
 router.get("/analytics/projects-by-status", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewFinancials"], errorMessage: "Financial access required" });
   if (!user) return;
-
-  // Require admin or canViewFinancials
-  if (user.role !== "admin" && !user.canViewFinancials) {
-    res.status(403).json({ error: "Financial access required" });
-    return;
-  }
 
   const qp = GetProjectsByStatusQueryParams.safeParse(req.query);
   const photographerId = qp.success ? qp.data.photographerId : undefined;
@@ -257,14 +247,8 @@ router.get("/analytics/projects-by-status", async (req, res): Promise<void> => {
 });
 
 router.get("/analytics/debt-list", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewFinancials"], errorMessage: "Financial access required" });
   if (!user) return;
-
-  // Require admin or canViewFinancials
-  if (user.role !== "admin" && !user.canViewFinancials) {
-    res.status(403).json({ error: "Financial access required" });
-    return;
-  }
 
   const qp = GetDebtListQueryParams.safeParse(req.query);
   const photographerId = qp.success ? qp.data.photographerId : undefined;
@@ -297,49 +281,61 @@ router.get("/analytics/debt-list", async (req, res): Promise<void> => {
     .orderBy(projectsTable.createdAt);
 
   const withDebt = [];
+  const debtProjects: Array<typeof projectsTable.$inferSelect & { remainingDebt: number }> = [];
   for (const project of projects) {
     const finalCost = project.finalCost ? parseFloat(project.finalCost as unknown as string) : 0;
     const amountPaid = project.amountPaid ? parseFloat(project.amountPaid as unknown as string) : 0;
     const discount = project.discount ? parseFloat(project.discount as unknown as string) : 0;
     const remainingDebt = Math.max(0, finalCost - discount - amountPaid);
-
     if (remainingDebt > 0) {
-      let clientName: string | null = null;
-      let photographerName: string | null = null;
-
-      const [client] = await db
-        .select({ name: clientsTable.name })
-        .from(clientsTable)
-        .where(eq(clientsTable.id, project.clientId));
-      clientName = client?.name ?? null;
-
-      if (project.photographerId) {
-        const [photographer] = await db
-          .select({ name: usersTable.name })
-          .from(usersTable)
-          .where(eq(usersTable.id, project.photographerId));
-        photographerName = photographer?.name ?? null;
-      }
-
-      withDebt.push({
-        id: project.id,
-        title: project.title,
-        clientId: project.clientId,
-        clientName,
-        photographerId: project.photographerId,
-        photographerName,
-        status: project.status,
-        progress: project.progress,
-        startDate: project.startDate,
-        deliveryDate: project.deliveryDate,
-        weTransferLink: project.weTransferLink,
-        expectedCost: project.expectedCost ? parseFloat(project.expectedCost as unknown as string) : null,
-        finalCost: project.finalCost ? parseFloat(project.finalCost as unknown as string) : null,
-        amountPaid: project.amountPaid ? parseFloat(project.amountPaid as unknown as string) : null,
-        remainingDebt,
-        createdAt: project.createdAt.toISOString(),
-      });
+      debtProjects.push({ ...project, remainingDebt });
     }
+  }
+
+  const clientIds = [...new Set(debtProjects.map((p) => p.clientId))];
+  const photographerIds = [
+    ...new Set(
+      debtProjects
+        .map((p) => p.photographerId)
+        .filter((id): id is number => id != null),
+    ),
+  ];
+
+  const clientRows = clientIds.length > 0
+    ? await db
+        .select({ id: clientsTable.id, name: clientsTable.name })
+        .from(clientsTable)
+        .where(inArray(clientsTable.id, clientIds))
+    : [];
+  const clientMap = new Map(clientRows.map((c) => [c.id, c.name]));
+
+  const photographerRows = photographerIds.length > 0
+    ? await db
+        .select({ id: usersTable.id, name: usersTable.name })
+        .from(usersTable)
+        .where(inArray(usersTable.id, photographerIds))
+    : [];
+  const photographerMap = new Map(photographerRows.map((p) => [p.id, p.name]));
+
+  for (const project of debtProjects) {
+    withDebt.push({
+      id: project.id,
+      title: project.title,
+      clientId: project.clientId,
+      clientName: clientMap.get(project.clientId) ?? null,
+      photographerId: project.photographerId,
+      photographerName: project.photographerId ? (photographerMap.get(project.photographerId) ?? null) : null,
+      status: project.status,
+      progress: project.progress,
+      startDate: project.startDate,
+      deliveryDate: project.deliveryDate,
+      weTransferLink: project.weTransferLink,
+      expectedCost: project.expectedCost ? parseFloat(project.expectedCost as unknown as string) : null,
+      finalCost: project.finalCost ? parseFloat(project.finalCost as unknown as string) : null,
+      amountPaid: project.amountPaid ? parseFloat(project.amountPaid as unknown as string) : null,
+      remainingDebt: project.remainingDebt,
+      createdAt: project.createdAt.toISOString(),
+    });
   }
 
   res.json(withDebt);

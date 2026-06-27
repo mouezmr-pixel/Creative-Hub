@@ -38,9 +38,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Search, AlertCircle, Workflow, Coins, Sparkles, Bot, MessageSquare, FileCheck, ChevronRight, Globe, Copy } from "lucide-react";
+import { Plus, Search, Workflow, Coins, Sparkles, Bot, MessageSquare, FileCheck, ChevronRight, Globe, Copy, LayoutGrid, LayoutList, FolderKanban, Play, CheckCircle2 } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
-import { CURRENCIES, Currency, formatCurrency } from "@/lib/currency";
+import { CURRENCIES, Currency } from "@/lib/currency";
 
 type Language = "arabic" | "algerian" | "english" | "french";
 const LANGUAGE_OPTIONS: { value: Language; labelKey: "langAlgerian" | "langArabicStd" | "langEnglish" | "langFrench"; nativeLabel: string }[] = [
@@ -56,6 +56,7 @@ export default function Projects() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
+const [viewMode, setViewMode] = useState<"list" | "grid">("list");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [selectedServicePrice, setSelectedServicePrice] = useState<string>("");
   const [selectedServiceId, setSelectedServiceId] = useState<number | null>(null);
@@ -67,7 +68,6 @@ export default function Projects() {
   const { data: pendingProjects = [] } = useListProjects({ ...baseParams, status: "pending" });
   const { data: completedProjects = [] } = useListProjects({ ...baseParams, status: "completed" });
   const { data: archivedProjects = [] } = useListProjects({ ...baseParams, status: "archived" });
-  const { data: debtProjects = [] } = useListProjects({ ...baseParams, hasDebt: "true" });
   const { data: clients = [] } = useListClients(baseParams);
   const { data: photographers = [] } = useListUsers();
   const { data: services = [] } = useListServices();
@@ -243,7 +243,7 @@ export default function Projects() {
   const ProjectList = ({ projects }: { projects: typeof allProjects }) => {
     const filtered = filterBySearch(projects);
     return (
-      <div className="space-y-3 mt-4">
+      <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4 mt-4" : "space-y-3 mt-4"}>
         {filtered.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground bg-slate-50 dark:bg-slate-800 rounded-xl border border-dashed border-border">
             {t("noProjectsFound")}
@@ -257,46 +257,62 @@ export default function Projects() {
               transition={{ delay: index * 0.04 }}
             >
               <Link href={`/projects/${project.id}`}>
-                <Card className={`hover:shadow-md transition-all cursor-pointer bg-white dark:bg-slate-900 border-border shadow-sm ${(project.remainingDebt ?? 0) > 0 ? "border-l-4 border-l-rose-400" : ""}`}>
-                  <CardContent className="p-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <Card className={`group hover:shadow-lg transition-all cursor-pointer bg-white dark:bg-slate-900 border-border shadow-sm overflow-hidden`}>
+                  {viewMode === "grid" && (
+                    <div className="h-1.5 w-full bg-gradient-to-r from-primary/40 via-primary to-primary/40" />
+                  )}
+                  <CardContent className={viewMode === "grid" ? "p-5" : "p-4"}>
+                    <div className={viewMode === "grid" ? "space-y-3" : "flex flex-col sm:flex-row sm:items-center justify-between gap-3"}>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-semibold text-base truncate">{project.title}</h3>
-                          {(project.remainingDebt ?? 0) > 0 && (
-                            <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0" />
-                          )}
+                          <h3 className="font-semibold text-base truncate group-hover:text-primary transition-colors">{project.title}</h3>
                         </div>
                         <p className="text-sm text-muted-foreground mt-0.5">
                           {project.clientName}
                           {project.photographerName && ` • ${project.photographerName}`}
                         </p>
-                        <div className="mt-2 max-w-xs">
-                          <div className="flex justify-between text-xs mb-1">
-                            <span className="text-muted-foreground">{t("progressLabel")}</span>
-                            <span>{project.progress}%</span>
+                        {viewMode === "grid" ? (
+                          <div className="mt-3 space-y-2">
+                            <Progress value={project.progress} className="h-1.5" />
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-muted-foreground">{t("progressLabel")}</span>
+                              <span className="font-medium">{project.progress}%</span>
+                            </div>
                           </div>
-                          <Progress value={project.progress} className="h-1.5" />
-                        </div>
+                        ) : (
+                          <div className="mt-2 max-w-xs">
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-muted-foreground">{t("progressLabel")}</span>
+                              <span>{project.progress}%</span>
+                            </div>
+                            <Progress value={project.progress} className="h-1.5" />
+                          </div>
+                        )}
                       </div>
-                      <div className="flex items-center gap-4 flex-shrink-0">
-                        {project.deliveryDate && (
-                          <span className="text-xs text-muted-foreground hidden sm:block">
-                            {t("due")}: {new Date(project.deliveryDate).toLocaleDateString()}
-                          </span>
+                      <div className={viewMode === "grid" ? "flex items-center justify-between pt-2 border-t border-border" : "flex items-center gap-4 flex-shrink-0"}>
+                        {viewMode === "grid" ? (
+                          <>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              {project.deliveryDate && (
+                                <span className="text-xs text-muted-foreground">
+                                  {t("due")}: {new Date(project.deliveryDate).toLocaleDateString()}
+                                </span>
+                              )}
+                            </div>
+                            <Badge className={`${getStatusColor(project.status)}`} variant="outline">
+                              {t(project.status as any) || project.status}
+                            </Badge>
+                          </>
+                        ) : (
+                          <>
+                            {project.deliveryDate && (
+                              <span className="text-xs text-muted-foreground hidden sm:block">
+                                {t("due")}: {new Date(project.deliveryDate).toLocaleDateString()}
+                              </span>
+                            )}
+                          </>
                         )}
-                        {(project.remainingDebt ?? 0) > 0 ? (
-                          <span className="text-sm text-destructive font-medium">
-                            {formatCurrency(project.remainingDebt ?? 0, (project as any).currency ?? "DZD")} {t("dueLabel")}
-                          </span>
-                        ) : (project.finalCost ?? 0) > 0 && (
-                          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 rounded-lg px-2 py-0.5">
-                            {t("fullyPaid")}
-                          </span>
-                        )}
-                        <Badge className={getStatusColor(project.status)} variant="outline">
-                          {t(project.status as any) || project.status}
-                        </Badge>
+                        
                       </div>
                     </div>
                   </CardContent>
@@ -316,6 +332,7 @@ export default function Projects() {
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{t("projects")}</h1>
           <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">{allProjects.length} {t("totalProjects")}</p>
         </div>
+        {user?.role === "admin" && (
         <Dialog open={isCreateOpen} onOpenChange={(open) => { setIsCreateOpen(open); if (!open) { reset(); setSelectedServicePrice(""); setSelectedTemplateId(""); setOriginalClientIdea(""); setAiInstructions(""); setAiLanguage("algerian"); setAiGeneratedSuggestion(""); setFinalProposedIdea(""); } }}>
           <DialogTrigger asChild>
             <Button className="gap-2 rounded-xl">
@@ -665,16 +682,74 @@ export default function Projects() {
             </form>
           </DialogContent>
         </Dialog>
+        )}
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          className="pl-10 bg-white dark:bg-slate-900 border-border rounded-xl"
-          placeholder={t("searchProjects")}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bento-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <FolderKanban className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{allProjects.length}</p>
+              <p className="text-xs text-muted-foreground">{t("totalProjects")}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bento-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
+              <Play className="w-5 h-5 text-blue-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{ongoingProjects.length}</p>
+              <p className="text-xs text-muted-foreground">{t("ongoing")}</p>
+            </div>
+          </div>
+        </div>
+        <div className="bento-card p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{completedProjects.length}</p>
+              <p className="text-xs text-muted-foreground">{t("completed")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            className="pl-10 bg-white dark:bg-slate-900 border-border rounded-xl"
+            placeholder={t("searchProjects")}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="flex items-center border border-border rounded-xl p-0.5 bg-white dark:bg-slate-900">
+          <Button
+            variant={viewMode === "list" ? "secondary" : "ghost"}
+            size="sm"
+            className="h-8 w-8 p-0 rounded-lg"
+            onClick={() => setViewMode("list")}
+          >
+            <LayoutList className="h-4 w-4" />
+          </Button>
+          <Button
+            variant={viewMode === "grid" ? "secondary" : "ghost"}
+            size="sm"
+            className="h-8 w-8 p-0 rounded-lg"
+            onClick={() => setViewMode("grid")}
+          >
+            <LayoutGrid className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="all">
@@ -684,14 +759,12 @@ export default function Projects() {
           <TabsTrigger value="pending">{t("pending")} ({pendingProjects.length})</TabsTrigger>
           <TabsTrigger value="completed">{t("completed")} ({completedProjects.length})</TabsTrigger>
           <TabsTrigger value="archived">{t("archived")} ({archivedProjects.length})</TabsTrigger>
-          <TabsTrigger value="debt" className="text-destructive">{t("debtList")} ({debtProjects.length})</TabsTrigger>
         </TabsList>
         <TabsContent value="all"><ProjectList projects={allProjects} /></TabsContent>
         <TabsContent value="ongoing"><ProjectList projects={ongoingProjects} /></TabsContent>
         <TabsContent value="pending"><ProjectList projects={pendingProjects} /></TabsContent>
         <TabsContent value="completed"><ProjectList projects={completedProjects} /></TabsContent>
         <TabsContent value="archived"><ProjectList projects={archivedProjects} /></TabsContent>
-        <TabsContent value="debt"><ProjectList projects={debtProjects} /></TabsContent>
       </Tabs>
     </div>
   );

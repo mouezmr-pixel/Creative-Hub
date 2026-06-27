@@ -50,4 +50,11 @@ Thumbs.db
 
 .env
 .env.*
+.env.local
+.env.*.local
 .agents/
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/

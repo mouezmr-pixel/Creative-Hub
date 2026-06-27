@@ -82,7 +82,7 @@ const DEMO_USERS = [
     email: "sarah@example.com",
     role: "client" as const,
     profession: null,
-    canViewFinancials: false,
+    canViewFinancials: true,
     canManageClients: false,
     canManageAllProjects: false,
     canInvoice: false,
@@ -96,7 +96,7 @@ const DEMO_USERS = [
     email: "omar@example.com",
     role: "client" as const,
     profession: null,
-    canViewFinancials: false,
+    canViewFinancials: true,
     canManageClients: false,
     canManageAllProjects: false,
     canInvoice: false,
@@ -108,6 +108,58 @@ const DEMO_USERS = [
 async function initializeDatabase() {
   try {
     console.log("DATABASE: Running startup initialization...");
+
+    // Fix schema mismatches from previous migrations
+    await db.execute(sql.raw(`
+      DO $$
+      BEGIN
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='monthly_generation_log' AND column_name='generated_at') THEN
+          ALTER TABLE monthly_generation_log RENAME COLUMN generated_at TO created_at;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='monthly_generation_log' AND column_name='project_id' AND is_nullable='YES') THEN
+          ALTER TABLE monthly_generation_log ALTER COLUMN project_id SET NOT NULL;
+        END IF;
+        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='monthly_package_items' AND column_name='price' AND data_type='numeric') THEN
+          ALTER TABLE monthly_package_items ALTER COLUMN price TYPE TEXT;
+        END IF;
+      END $$;
+    `));
+
+    // Ensure required tables and columns exist
+    await db.execute(sql.raw(`
+      ALTER TABLE celebrities ADD COLUMN IF NOT EXISTS phone TEXT;
+      ALTER TABLE celebrities ADD COLUMN IF NOT EXISTS email TEXT;
+
+      CREATE TABLE IF NOT EXISTS monthly_packages (
+        id SERIAL PRIMARY KEY,
+        title TEXT NOT NULL,
+        client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+        service_id INTEGER REFERENCES services(id) ON DELETE SET NULL,
+        currency TEXT NOT NULL DEFAULT 'TND',
+        notes TEXT,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS monthly_package_items (
+        id SERIAL PRIMARY KEY,
+        package_id INTEGER NOT NULL REFERENCES monthly_packages(id) ON DELETE CASCADE,
+        title TEXT NOT NULL,
+        price TEXT NOT NULL,
+        display_order INTEGER NOT NULL DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS monthly_generation_log (
+        id SERIAL PRIMARY KEY,
+        package_id INTEGER NOT NULL REFERENCES monthly_packages(id) ON DELETE CASCADE,
+        project_id INTEGER NOT NULL,
+        month TEXT NOT NULL,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+        UNIQUE(package_id, month)
+      );
+    `));
+    console.log("✅ Database tables verified");
 
     // Create the session table for connect-pg-simple if it doesn't exist
     await db.execute(sql`
@@ -148,6 +200,12 @@ async function initializeDatabase() {
         });
         console.log(`DATABASE: Created user '${demo.username}' (${demo.role})`);
         logger.info({ username: demo.username, role: demo.role }, "Seeded demo user");
+      } else if (demo.role === "client") {
+        // Sync canViewFinancials for existing demo clients
+        await db
+          .update(usersTable)
+          .set({ canViewFinancials: demo.canViewFinancials })
+          .where(eq(usersTable.id, existing.id));
       } else {
         // 2. Migrate plaintext password to bcrypt if needed
         if (!existing.password.startsWith("$2")) {
@@ -169,6 +227,12 @@ async function initializeDatabase() {
         logger.info({ userId: user.id }, "Migrated password to bcrypt");
       }
     }
+
+    // 4. Sync canViewFinancials for demo clients in the clients table
+    await db.execute(
+      sql`UPDATE clients SET can_view_financials = true WHERE user_id IN (SELECT id FROM users WHERE username IN ('client1', 'client2'))`
+    );
+    console.log("DATABASE: Client financials synced");
 
     console.log("DATABASE: Admin user created/verified successfully");
     logger.info("Database initialization complete");

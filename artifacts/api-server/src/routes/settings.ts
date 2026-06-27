@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db, studioSettingsTable } from "@workspace/db";
 import { updateStudioSettingsSchema } from "@workspace/db/schema/studio-settings";
 import type { StudioSettings } from "@workspace/db/schema/studio-settings";
-import { requireAdmin } from "../middlewares/auth";
+import { requireAccess } from "../middlewares/auth";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
@@ -39,8 +39,8 @@ function toResponse(s: StudioSettings) {
     invoiceNotes: s.invoiceNotes ?? "",
     logoUrl: s.logoUrl ?? "",
     stampUrl: s.stampUrl ?? "",
-    showStamp: s.showStamp ?? "true",
-    showSignature: s.showSignature ?? "true",
+    showStamp: s.showStamp ?? true,
+    showSignature: s.showSignature ?? true,
   };
 }
 
@@ -54,15 +54,14 @@ router.get("/settings", async (_req, res): Promise<void> => {
       address: "", phone: "", email: "", website: "", taxId: "",
       invoicePrefix: "INV-", proformaPrefix: "PF-",
       paymentTerms: "", invoiceFooter: "", invoiceNotes: "",
-      logoUrl: "", stampUrl: "", showStamp: "true", showSignature: "true",
+      logoUrl: "", stampUrl: "", showStamp: true, showSignature: true,
       createdAt: new Date(), updatedAt: new Date(),
     }));
   }
 });
 
 router.put("/settings", async (req, res): Promise<void> => {
-  const user = await requireAdmin(req, res);
-  if (!user) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
   const parsed = updateStudioSettingsSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -78,8 +77,7 @@ router.put("/settings", async (req, res): Promise<void> => {
 
 router.post("/settings/upload", async (req, res) => {
   try {
-    const user = await requireAdmin(req, res);
-    if (!user) return;
+    if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
     const { data, name } = req.body as { data?: string; name?: string };
     if (!data || typeof data !== "string") {
@@ -87,13 +85,13 @@ router.post("/settings/upload", async (req, res) => {
       return;
     }
 
-    const matches = data.match(/^data:image\/(png|jpeg|jpg|gif|svg\+xml|webp);base64,(.+)$/);
+    const matches = data.match(/^data:image\/(png|jpeg|jpg|gif|webp);base64,(.+)$/);
     if (!matches) {
-      res.status(400).json({ error: "Invalid image format. Supported: PNG, JPG, GIF, SVG, WEBP" });
+      res.status(400).json({ error: "Invalid image format. Supported: PNG, JPG, GIF, WEBP" });
       return;
     }
 
-    const ext = matches[1].replace("svg+xml", "svg").replace("jpeg", "jpg");
+    const ext = matches[1].replace("jpeg", "jpg");
     const base64 = matches[2];
     const buffer = Buffer.from(base64, "base64");
 

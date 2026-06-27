@@ -7,19 +7,13 @@ import {
   usersTable,
   clientsTable,
 } from "@workspace/db";
-import { getSessionUser } from "../middlewares/auth";
+import { getSessionUser, requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 // GET /payments — financial access required
 router.get("/payments", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role !== "admin" && !user.canViewFinancials && !user.canViewAccounting) {
-    res.status(403).json({ error: "Financial access required" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewFinancials", "canViewAccounting"] }))) return;
 
   const projectId = req.query.projectId ? Number(req.query.projectId) : undefined;
   const startDate = req.query.startDate ? new Date(String(req.query.startDate)) : undefined;
@@ -63,13 +57,7 @@ router.get("/payments", async (req, res): Promise<void> => {
 
 // GET /payments/summary — financial access required
 router.get("/payments/summary", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role !== "admin" && !user.canViewFinancials && !user.canViewAccounting) {
-    res.status(403).json({ error: "Financial access required" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewFinancials", "canViewAccounting"] }))) return;
 
   const startDate = req.query.startDate ? new Date(String(req.query.startDate)) : undefined;
   const endDate = req.query.endDate ? new Date(String(req.query.endDate)) : undefined;
@@ -98,6 +86,97 @@ router.get("/payments/summary", async (req, res): Promise<void> => {
       paymentCount: Number(r.paymentCount),
     }))
   );
+});
+
+// GET /payments/client — returns all payments across the logged-in client's projects
+router.get("/payments/client", async (req, res): Promise<void> => {
+  const user = await getSessionUser(req, res);
+  if (!user) return;
+
+  if (user.role !== "client") {
+    res.status(403).json({ error: "Client access required" });
+    return;
+  }
+
+  const [clientRecord] = await db
+    .select({ id: clientsTable.id, canViewFinancials: clientsTable.canViewFinancials })
+    .from(clientsTable)
+    .where(eq(clientsTable.userId, user.id));
+
+  if (!clientRecord || !clientRecord.canViewFinancials) {
+    res.json({ projects: [], payments: [], summary: { totalCost: 0, totalPaid: 0, totalRemaining: 0, projectCount: 0 } });
+    return;
+  }
+
+  // Get all projects for this client
+  const projects = await db
+    .select({
+      id: projectsTable.id,
+      title: projectsTable.title,
+      finalCost: projectsTable.finalCost,
+      amountPaid: projectsTable.amountPaid,
+      discount: projectsTable.discount,
+      currency: projectsTable.currency,
+      status: projectsTable.status,
+    })
+    .from(projectsTable)
+    .where(eq(projectsTable.clientId, clientRecord.id))
+    .orderBy(desc(projectsTable.createdAt));
+
+  if (projects.length === 0) {
+    res.json({ projects: [], payments: [], summary: { totalCost: 0, totalPaid: 0, totalRemaining: 0, projectCount: 0 } });
+    return;
+  }
+
+  const projectIds = projects.map((p) => p.id);
+
+  // Get all payments for these projects
+  const rawPayments = await db
+    .select({
+      payment: paymentHistoryTable,
+      recorderName: usersTable.name,
+    })
+    .from(paymentHistoryTable)
+    .leftJoin(usersTable, eq(paymentHistoryTable.recordedBy, usersTable.id))
+    .where(sql`${paymentHistoryTable.projectId} IN (${projectIds.join(",")})`)
+    .orderBy(desc(paymentHistoryTable.paymentDate));
+
+  const mappedPayments = rawPayments.map((r) => ({
+    ...r.payment,
+    amount: parseFloat(r.payment.amount as unknown as string),
+    recorder: r.payment.recordedBy ? { name: r.recorderName } : null,
+  }));
+
+  const mappedProjects = projects.map((p) => {
+    const finalCost = p.finalCost ? parseFloat(p.finalCost as unknown as string) : 0;
+    const amountPaid = p.amountPaid ? parseFloat(p.amountPaid as unknown as string) : 0;
+    const discount = p.discount ? parseFloat(p.discount as unknown as string) : 0;
+    return {
+      id: p.id,
+      title: p.title,
+      finalCost,
+      amountPaid,
+      discount,
+      remaining: Math.max(0, finalCost - amountPaid - discount),
+      currency: p.currency,
+      status: p.status,
+    };
+  });
+
+  const summary = mappedProjects.reduce(
+    (acc, p) => ({
+      totalCost: acc.totalCost + p.finalCost,
+      totalPaid: acc.totalPaid + p.amountPaid,
+      totalRemaining: acc.totalRemaining + p.remaining,
+    }),
+    { totalCost: 0, totalPaid: 0, totalRemaining: 0 }
+  );
+
+  res.json({
+    projects: mappedProjects,
+    payments: mappedPayments,
+    summary: { ...summary, projectCount: mappedProjects.length },
+  });
 });
 
 // GET /payments/project/:projectId — client can access only their own project
@@ -183,13 +262,8 @@ router.get("/payments/project/:projectId", async (req, res): Promise<void> => {
 
 // POST /payments — admin or canInvoice
 router.post("/payments", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
+  const user = await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canInvoice"], errorMessage: "Invoice permission required" });
   if (!user) return;
-
-  if (user.role !== "admin" && !user.canInvoice) {
-    res.status(403).json({ error: "Invoice permission required" });
-    return;
-  }
 
   const { projectId, amount, currency, paymentMethod, receiptNumber, paymentDate, notes } = req.body ?? {};
 
@@ -220,29 +294,32 @@ router.post("/payments", async (req, res): Promise<void> => {
   }
 
   try {
-    const [created] = await db
-      .insert(paymentHistoryTable)
-      .values({
-        projectId: Number(projectId),
-        amount: String(numericAmount),
-        currency: currency || "DZD",
-        paymentMethod: paymentMethod || null,
-        receiptNumber: receiptNumber || null,
-        paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
-        notes: notes || null,
-        recordedBy: user.id,
-      })
-      .returning();
+    const [created] = await db.transaction(async (tx) => {
+      const [payment] = await tx
+        .insert(paymentHistoryTable)
+        .values({
+          projectId: Number(projectId),
+          amount: String(numericAmount),
+          currency: currency || "DZD",
+          paymentMethod: paymentMethod || null,
+          receiptNumber: receiptNumber || null,
+          paymentDate: paymentDate ? new Date(paymentDate) : new Date(),
+          notes: notes || null,
+          recordedBy: user.id,
+        })
+        .returning();
 
-    // Sync projects.amountPaid = SUM(payment_history.amount) for this project
-    const [sumRow] = await db
-      .select({ total: sql<string>`COALESCE(SUM(${paymentHistoryTable.amount}), 0)` })
-      .from(paymentHistoryTable)
-      .where(eq(paymentHistoryTable.projectId, Number(projectId)));
-    await db
-      .update(projectsTable)
-      .set({ amountPaid: sumRow.total } as any)
-      .where(eq(projectsTable.id, Number(projectId)));
+      const [sumRow] = await tx
+        .select({ total: sql<string>`COALESCE(SUM(${paymentHistoryTable.amount}), 0)` })
+        .from(paymentHistoryTable)
+        .where(eq(paymentHistoryTable.projectId, Number(projectId)));
+      await tx
+        .update(projectsTable)
+        .set({ amountPaid: sumRow.total } as any)
+        .where(eq(projectsTable.id, Number(projectId)));
+
+      return [payment];
+    });
 
     res.status(201).json({
       ...created,
@@ -255,13 +332,7 @@ router.post("/payments", async (req, res): Promise<void> => {
 
 // DELETE /payments/:id — admin only
 router.delete("/payments/:id", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role !== "admin") {
-    res.status(403).json({ error: "Admin only" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
   const id = Number(req.params.id);
   if (Number.isNaN(id)) {
@@ -280,17 +351,18 @@ router.delete("/payments/:id", async (req, res): Promise<void> => {
   }
   const projId = existing.projectId;
 
-  await db.delete(paymentHistoryTable).where(eq(paymentHistoryTable.id, id));
+  await db.transaction(async (tx) => {
+    await tx.delete(paymentHistoryTable).where(eq(paymentHistoryTable.id, id));
 
-  // Sync projects.amountPaid = SUM(payment_history.amount) for this project
-  const [sumRow] = await db
-    .select({ total: sql<string>`COALESCE(SUM(${paymentHistoryTable.amount}), 0)` })
-    .from(paymentHistoryTable)
-    .where(eq(paymentHistoryTable.projectId, projId));
-  await db
-    .update(projectsTable)
-    .set({ amountPaid: sumRow.total } as any)
-    .where(eq(projectsTable.id, projId));
+    const [sumRow] = await tx
+      .select({ total: sql<string>`COALESCE(SUM(${paymentHistoryTable.amount}), 0)` })
+      .from(paymentHistoryTable)
+      .where(eq(paymentHistoryTable.projectId, projId));
+    await tx
+      .update(projectsTable)
+      .set({ amountPaid: sumRow.total } as any)
+      .where(eq(projectsTable.id, projId));
+  });
 
   res.json({ ok: true });
 });

@@ -1,10 +1,11 @@
 import { Router, type IRouter } from "express";
-import { eq, sql, and, gte, lte, inArray } from "drizzle-orm";
+import { eq, sql, and, gte, lte, inArray, or } from "drizzle-orm";
 import {
   db, expensesTable, projectsTable, servicesTable, usersTable,
   projectAssigneesTable, paymentHistoryTable, recurringExpensesTable,
 } from "@workspace/db";
 import { format, subMonths } from "date-fns";
+import { requireAccess, getSessionUser } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
@@ -20,29 +21,14 @@ function formatExpense(expense: typeof expensesTable.$inferSelect) {
   };
 }
 
-async function checkAccess(req: any, res: any): Promise<boolean> {
-  const sessionData = req.session as unknown as Record<string, unknown>;
-  if (!sessionData.userId) {
-    res.status(401).json({ error: "Not authenticated" });
-    return false;
-  }
-  const userId = sessionData.userId as number;
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, userId));
-  if (!user || (user.role !== "admin" && !user.canViewAccounting)) {
-    res.status(403).json({ error: "Access denied" });
-    return false;
-  }
-  return true;
-}
-
 router.get("/expenses", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const expenses = await db.select().from(expensesTable).orderBy(expensesTable.date);
   res.json(expenses.map(formatExpense));
 });
 
 router.post("/expenses", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const { category, amount, date, description, reference } = req.body;
   if (!category || !amount || !date) {
     res.status(400).json({ error: "category, amount, and date are required" });
@@ -75,7 +61,7 @@ router.post("/expenses", async (req, res): Promise<void> => {
 // Auto-create salary expenses for all salaried creatives for a given month.
 // Dedup by reference: "salary_auto_{userId}_{month}". Skips if already recorded.
 router.post("/accounting/process-salaries/:month", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const month = req.params.month;
   if (!/^\d{4}-\d{2}$/.test(month)) {
     res.status(400).json({ error: "month must be YYYY-MM format" });
@@ -137,13 +123,13 @@ function formatRecurringExpense(e: typeof recurringExpensesTable.$inferSelect) {
 }
 
 router.get("/recurring-expenses", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const items = await db.select().from(recurringExpensesTable).orderBy(recurringExpensesTable.name);
   res.json(items.map(formatRecurringExpense));
 });
 
 router.post("/recurring-expenses", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const { name, category, amount, description, isActive } = req.body;
   if (!name || !category || !amount) {
     res.status(400).json({ error: "name, category, and amount are required" });
@@ -160,7 +146,7 @@ router.post("/recurring-expenses", async (req, res): Promise<void> => {
 });
 
 router.patch("/recurring-expenses/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const id = parseInt(req.params.id, 10);
   const { name, category, amount, description, isActive } = req.body;
   const updateData: Partial<typeof recurringExpensesTable.$inferInsert> = {};
@@ -175,7 +161,7 @@ router.patch("/recurring-expenses/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/recurring-expenses/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const id = parseInt(req.params.id, 10);
   await db.delete(recurringExpensesTable).where(eq(recurringExpensesTable.id, id));
   res.sendStatus(204);
@@ -185,7 +171,7 @@ router.delete("/recurring-expenses/:id", async (req, res): Promise<void> => {
 // Auto-create expenses from all active recurring templates for the given month.
 // Dedup by reference: "recurring_{templateId}_{YYYY-MM}". Skips if already recorded.
 router.post("/accounting/process-recurring/:month", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const month = req.params.month;
   if (!/^\d{4}-\d{2}$/.test(month)) {
     res.status(400).json({ error: "month must be YYYY-MM format" });
@@ -225,7 +211,7 @@ router.post("/accounting/process-recurring/:month", async (req, res): Promise<vo
 });
 
 router.patch("/expenses/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const id = parseInt(req.params.id, 10);
   const { category, amount, date, description } = req.body;
   const updateData: Partial<typeof expensesTable.$inferInsert> = {};
@@ -239,7 +225,7 @@ router.patch("/expenses/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/expenses/:id", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
   const id = parseInt(req.params.id, 10);
   await db.delete(expensesTable).where(eq(expensesTable.id, id));
   res.sendStatus(204);
@@ -249,7 +235,7 @@ router.delete("/expenses/:id", async (req, res): Promise<void> => {
 // Revenue = sum of all collected payments (payment_history), grouped by currency.
 // Monthly bar-chart buckets payments by payment_date.
 router.get("/accounting/summary", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
 
   // Revenue: sum of all payment_history grouped by currency
   const paymentRows = await db
@@ -261,55 +247,59 @@ router.get("/accounting/summary", async (req, res): Promise<void> => {
     .groupBy(paymentHistoryTable.currency);
 
   const revenueByCurrency: Record<string, number> = {};
-  let totalRevenue = 0;
   for (const row of paymentRows) {
-    const amt = parseFloat(row.total);
-    revenueByCurrency[row.currency ?? "DZD"] = amt;
-    totalRevenue += amt;
+    revenueByCurrency[row.currency ?? "DZD"] = parseFloat(row.total);
   }
 
   const expenses = await db.select().from(expensesTable);
   const totalExpenses = expenses.reduce(
     (sum, e) => sum + parseFloat(e.amount as unknown as string), 0
   );
-  const netProfit = totalRevenue - totalExpenses;
+  const expensesByCurrency: Record<string, number> = { DZD: totalExpenses };
+
+  const netProfitByCurrency: Record<string, number> = {};
+  for (const [cur, rev] of Object.entries(revenueByCurrency)) {
+    netProfitByCurrency[cur] = Math.round((rev - (cur === "DZD" ? totalExpenses : 0)) * 100) / 100;
+  }
 
   // Monthly breakdown: last 12 months — bucket payments by payment_date
   const now = new Date();
-  const monthlyMap: Record<string, { revenue: number; expenses: number }> = {};
+  const monthlyMap: Record<string, { revenueByCurrency: Record<string, number>; expensesByCurrency: Record<string, number> }> = {};
   for (let i = 11; i >= 0; i--) {
     const key = format(subMonths(now, i), "yyyy-MM");
-    monthlyMap[key] = { revenue: 0, expenses: 0 };
+    monthlyMap[key] = { revenueByCurrency: {}, expensesByCurrency: {} };
   }
 
   const allPayments = await db
     .select({
       paymentDate: paymentHistoryTable.paymentDate,
       amount: paymentHistoryTable.amount,
+      currency: paymentHistoryTable.currency,
     })
     .from(paymentHistoryTable);
 
   for (const p of allPayments) {
     const key = format(p.paymentDate, "yyyy-MM");
     if (monthlyMap[key] !== undefined) {
-      monthlyMap[key].revenue += parseFloat(p.amount as unknown as string);
+      const cur = p.currency ?? "DZD";
+      monthlyMap[key].revenueByCurrency[cur] = (monthlyMap[key].revenueByCurrency[cur] ?? 0) + parseFloat(p.amount as unknown as string);
     }
   }
 
   for (const e of expenses) {
     const key = e.date.substring(0, 7);
     if (monthlyMap[key] !== undefined) {
-      monthlyMap[key].expenses += parseFloat(e.amount as unknown as string);
+      monthlyMap[key].expensesByCurrency["DZD"] = (monthlyMap[key].expensesByCurrency["DZD"] ?? 0) + parseFloat(e.amount as unknown as string);
     }
   }
 
   const monthly = Object.entries(monthlyMap).map(([month, data]) => ({
     month,
-    revenue: data.revenue,
-    expenses: data.expenses,
+    revenueByCurrency: data.revenueByCurrency,
+    expensesByCurrency: data.expensesByCurrency,
   }));
 
-  res.json({ totalRevenue, totalExpenses, netProfit, revenueByCurrency, monthly });
+  res.json({ revenueByCurrency, expensesByCurrency, netProfitByCurrency, monthly });
 });
 
 // ─── GET /accounting/monthly ─────────────────────────────────────────────────
@@ -317,7 +307,7 @@ router.get("/accounting/summary", async (req, res): Promise<void> => {
 // Service breakdown + transactions are payment-based.
 // Team payouts remain commission-based (earned on delivery, not payment date).
 router.get("/accounting/monthly", async (req, res): Promise<void> => {
-  if (!(await checkAccess(req, res))) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"], requiredPermissions: ["canViewAccounting"] }))) return;
 
   const now = new Date();
   const month = (req.query.month as string) ?? format(now, "yyyy-MM");
@@ -379,8 +369,7 @@ router.get("/accounting/monthly", async (req, res): Promise<void> => {
 
   const monthCompletedProjects = allProjects.filter((p) => {
     if (p.status !== "completed" || !p.finalCost) return false;
-    const dateStr = p.startDate ?? format(p.createdAt, "yyyy-MM-dd");
-    return dateStr.startsWith(month);
+    return p.completedAt && format(p.completedAt, "yyyy-MM") === month;
   });
   const monthCompletedIds = monthCompletedProjects.map((p) => p.id);
 
@@ -441,8 +430,13 @@ router.get("/accounting/monthly", async (req, res): Promise<void> => {
   const generalExpenses = monthExpenses.reduce((sum, e) => sum + parseFloat(e.amount as unknown as string), 0);
   const projectCosts = Math.round(totalPerProjectFees * 100) / 100;
   const operatingExpenses = Math.round((totalSalaries + generalExpenses) * 100) / 100;
-  const expenses = Math.round((generalExpenses + totalSalaries + totalPerProjectFees) * 100) / 100;
-  const netProfit = Math.round((revenue - expenses) * 100) / 100;
+  const totalExpenses = Math.round((generalExpenses + totalSalaries + totalPerProjectFees) * 100) / 100;
+
+  const expensesByCurrency: Record<string, number> = { DZD: totalExpenses };
+  const netProfitByCurrency: Record<string, number> = {};
+  for (const [cur, rev] of Object.entries(revenueByCurrency)) {
+    netProfitByCurrency[cur] = Math.round((rev - (cur === "DZD" ? totalExpenses : 0)) * 100) / 100;
+  }
 
   // ── Service breakdown: group payments by project's service, per currency ──
   const serviceRevMap: Record<string, {
@@ -517,9 +511,126 @@ router.get("/accounting/monthly", async (req, res): Promise<void> => {
   transactions.sort((a, b) => a.date.localeCompare(b.date));
 
   res.json({
-    month, revenue, revenueByCurrency,
-    projectCosts, operatingExpenses, expenses, netProfit,
+    month, revenueByCurrency, expensesByCurrency, netProfitByCurrency,
+    projectCosts, operatingExpenses,
     serviceBreakdown, transactions, teamPayouts,
+  });
+});
+
+// ─── GET /accounting/my-dues ──────────────────────────────────────────────────
+router.get("/accounting/my-dues", async (req, res): Promise<void> => {
+  const user = await getSessionUser(req, res);
+  if (!user) return;
+  if (user.role !== "photographer") {
+    res.status(403).json({ error: "Only creatives can access this" });
+    return;
+  }
+
+  const now = new Date();
+  const month = format(now, "yyyy-MM");
+  const paymentType = (user as any).paymentType ?? "per_project";
+  const salaryAmount = (user as any).salaryAmount
+    ? parseFloat((user as any).salaryAmount as string)
+    : null;
+
+  let monthlySalary: { amount: number; recorded: boolean } | null = null;
+  if (paymentType === "monthly_salary" && salaryAmount) {
+    const reference = `salary_auto_${user.id}_${month}`;
+    const [dup] = await db
+      .select({ id: expensesTable.id })
+      .from(expensesTable)
+      .where(eq(expensesTable.reference, reference));
+    monthlySalary = { amount: salaryAmount, recorded: !!dup };
+  }
+
+  // Projects where user is primary photographer or assignee
+  const assignedRows = await db
+    .select({ projectId: projectAssigneesTable.projectId })
+    .from(projectAssigneesTable)
+    .where(eq(projectAssigneesTable.userId, user.id));
+  const assignedIds = assignedRows.map((r) => r.projectId);
+
+  const allUserProjects = await db
+    .select()
+    .from(projectsTable)
+    .where(
+      or(
+        eq(projectsTable.photographerId, user.id),
+        assignedIds.length > 0
+          ? inArray(projectsTable.id, assignedIds)
+          : undefined,
+      ),
+    );
+
+  const commissionRows = await db
+    .select()
+    .from(projectAssigneesTable)
+    .where(eq(projectAssigneesTable.userId, user.id));
+  const commissionMap: Record<number, { commissionType: string | null; commissionValue: number | null }> = {};
+  for (const c of commissionRows) {
+    commissionMap[c.projectId] = {
+      commissionType: c.commissionType ?? null,
+      commissionValue: c.commissionValue ? parseFloat(c.commissionValue as string) : null,
+    };
+  }
+
+  const projects = await Promise.all(
+    allUserProjects.map(async (p) => {
+      const comm = commissionMap[p.id];
+      let calculatedFee: number | null = null;
+      if (comm?.commissionValue) {
+        if (comm.commissionType === "percentage" && p.finalCost) {
+          calculatedFee = (parseFloat(p.finalCost as string) * comm.commissionValue) / 100;
+        } else if (comm.commissionType === "fixed") {
+          calculatedFee = comm.commissionValue;
+        }
+      }
+      return {
+        id: p.id,
+        title: p.title,
+        status: p.status,
+        finalCost: p.finalCost ? parseFloat(p.finalCost as string) : null,
+        commissionType: comm?.commissionType ?? null,
+        commissionValue: comm?.commissionValue ?? null,
+        calculatedFee,
+      };
+    }),
+  );
+
+  const recentExpenses = await db
+    .select()
+    .from(expensesTable)
+    .where(
+      and(
+        eq(expensesTable.category, "creative_payout"),
+        sql`${expensesTable.description} LIKE ${`%${user.name}%`}`,
+      ),
+    )
+    .orderBy(expensesTable.date)
+    .limit(20);
+
+  const recentPayouts = recentExpenses.map((e) => ({
+    id: e.id,
+    amount: parseFloat(e.amount as unknown as string),
+    date: e.date,
+    description: e.description ?? null,
+    reference: e.reference ?? null,
+  }));
+
+  const totalDueThisMonth = paymentType === "monthly_salary"
+    ? (monthlySalary?.amount ?? 0)
+    : projects
+        .filter((p) => p.status === "completed" && p.calculatedFee)
+        .reduce((sum, p) => sum + (p.calculatedFee ?? 0), 0);
+
+  res.json({
+    paymentType,
+    salaryAmount,
+    monthlySalary,
+    totalDueThisMonth,
+    projects,
+    recentPayouts,
+    month,
   });
 });
 

@@ -180,6 +180,10 @@ router.get("/projects", async (req, res): Promise<void> => {
     }
   }
 
+  if (user.role === "photographer") {
+    formatted = formatted.map(maskFinancials);
+  }
+
   res.json(formatted);
 });
 
@@ -187,8 +191,8 @@ router.post("/projects", async (req, res): Promise<void> => {
   const user = await getSessionUser(req, res);
   if (!user) return;
 
-  // Clients cannot create projects via API
-  if (user.role === "client") {
+  // Clients and photographers cannot create projects via API
+  if (user.role === "client" || user.role === "photographer") {
     res.status(403).json({ error: "Access denied" });
     return;
   }
@@ -267,6 +271,10 @@ router.get("/projects/:id", async (req, res): Promise<void> => {
     }
   }
 
+  if (user && user.role === "photographer") {
+    formatted = maskFinancials(formatted);
+  }
+
   res.json(formatted);
 });
 
@@ -282,10 +290,10 @@ router.patch("/projects/:id", async (req, res): Promise<void> => {
   const accessCheck = await requireProjectAccess(req, res, params.data.id);
   if (!accessCheck) return;
 
-  // Clients cannot mutate projects
+  // Clients and photographers cannot mutate projects
   const user = await getSessionUser(req, res);
   if (!user) return;
-  if (user.role === "client") {
+  if (user.role === "client" || user.role === "photographer") {
     res.status(403).json({ error: "Access denied" });
     return;
   }
@@ -312,6 +320,7 @@ router.patch("/projects/:id", async (req, res): Promise<void> => {
   if (parsed.data.status != null) updateData.status = parsed.data.status;
   if (parsed.data.progress != null) updateData.progress = parsed.data.progress;
   if (wasJustCompleted) updateData.progress = 100;
+  if (wasJustCompleted) updateData.completedAt = new Date();
   if ("startDate" in parsed.data) updateData.startDate = parsed.data.startDate;
   if ("deliveryDate" in parsed.data) updateData.deliveryDate = parsed.data.deliveryDate;
   if ("weTransferLink" in parsed.data) updateData.weTransferLink = parsed.data.weTransferLink;

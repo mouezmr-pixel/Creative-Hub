@@ -28,6 +28,12 @@ tags:
     description: Business expense tracking
   - name: recurring-expenses
     description: Recurring expense templates
+  - name: campaigns
+    description: Campaign and offer management
+  - name: celebrities
+    description: Celebrity profiles
+  - name: monthly-packages
+    description: Monthly package management
 paths:
   /healthz:
     get:
@@ -1323,6 +1329,657 @@ paths:
               schema:
                 $ref: "#/components/schemas/EnhanceProposalResponse"
 
+  /campaigns:
+    get:
+      operationId: listCampaigns
+      tags: [campaigns]
+      summary: List all campaigns
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: clientId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Campaign"
+    post:
+      operationId: createCampaign
+      tags: [campaigns]
+      summary: Create a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCampaignBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+        "400":
+          description: Bad request
+
+  /campaigns/{id}:
+    get:
+      operationId: getCampaign
+      tags: [campaigns]
+      summary: Get campaign with services and milestones
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Campaign with services and milestones
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CampaignDetail"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateCampaign
+      tags: [campaigns]
+      summary: Update campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCampaignBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+    delete:
+      operationId: deleteCampaign
+      tags: [campaigns]
+      summary: Delete campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /campaigns/{id}/share:
+    post:
+      operationId: shareCampaign
+      tags: [campaigns]
+      summary: Share campaign with client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Shared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+
+  /campaigns/{id}/unshare:
+    post:
+      operationId: unshareCampaign
+      tags: [campaigns]
+      summary: Unshare campaign from client
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Unshared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+
+  /client/campaigns:
+    get:
+      operationId: listClientCampaigns
+      tags: [campaigns]
+      summary: List shared campaigns for client
+      responses:
+        "200":
+          description: List of shared campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CampaignDetail"
+
+  /campaigns/{id}/services:
+    get:
+      operationId: listCampaignServices
+      tags: [campaigns]
+      summary: List services for a campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of campaign services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CampaignService"
+    post:
+      operationId: addCampaignService
+      tags: [campaigns]
+      summary: Add a service to campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCampaignServiceBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CampaignService"
+
+  /campaigns/{id}/services/{serviceId}:
+    delete:
+      operationId: removeCampaignService
+      tags: [campaigns]
+      summary: Remove a service from campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /campaigns/{id}/milestones:
+    get:
+      operationId: listCampaignMilestones
+      tags: [campaigns]
+      summary: List milestones for a campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of milestones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CampaignMilestone"
+    post:
+      operationId: addCampaignMilestone
+      tags: [campaigns]
+      summary: Add a milestone to campaign
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCampaignMilestoneBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CampaignMilestone"
+
+  /campaigns/{id}/milestones/{milestoneId}:
+    patch:
+      operationId: updateCampaignMilestone
+      tags: [campaigns]
+      summary: Update a milestone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: milestoneId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCampaignMilestoneBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CampaignMilestone"
+    delete:
+      operationId: deleteCampaignMilestone
+      tags: [campaigns]
+      summary: Delete a milestone
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: milestoneId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /celebrities:
+    get:
+      operationId: listCelebrities
+      tags: [celebrities]
+      summary: List all celebrities
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: audience
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: tag
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: priceMin
+          in: query
+          required: false
+          schema:
+            type: number
+        - name: priceMax
+          in: query
+          required: false
+          schema:
+            type: number
+      responses:
+        "200":
+          description: List of celebrities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Celebrity"
+    post:
+      operationId: createCelebrity
+      tags: [celebrities]
+      summary: Create a celebrity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCelebrityBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Celebrity"
+
+  /celebrities/{id}:
+    get:
+      operationId: getCelebrity
+      tags: [celebrities]
+      summary: Get a celebrity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Celebrity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Celebrity"
+    patch:
+      operationId: updateCelebrity
+      tags: [celebrities]
+      summary: Update a celebrity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCelebrityBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Celebrity"
+    delete:
+      operationId: deleteCelebrity
+      tags: [celebrities]
+      summary: Delete a celebrity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /celebrity-offers:
+    get:
+      operationId: listCelebrityOffers
+      tags: [celebrities]
+      summary: List all celebrity offers
+      parameters:
+        - name: celebrityId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Celebrity offers list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CelebrityOffer"
+    post:
+      operationId: createCelebrityOffer
+      tags: [celebrities]
+      summary: Create a celebrity offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCelebrityOfferBody"
+      responses:
+        "201":
+          description: Celebrity offer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CelebrityOffer"
+  /celebrity-offers/{id}:
+    get:
+      operationId: getCelebrityOffer
+      tags: [celebrities]
+      summary: Get a celebrity offer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Celebrity offer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CelebrityOffer"
+    patch:
+      operationId: updateCelebrityOffer
+      tags: [celebrities]
+      summary: Update a celebrity offer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCelebrityOfferBody"
+      responses:
+        "200":
+          description: Celebrity offer updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CelebrityOffer"
+    delete:
+      operationId: deleteCelebrityOffer
+      tags: [celebrities]
+      summary: Delete a celebrity offer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /monthly-packages:
+    get:
+      operationId: listMonthlyPackages
+      tags: [monthly-packages]
+      summary: List all monthly packages
+      responses:
+        "200":
+          description: Monthly packages list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyPackage"
+    post:
+      operationId: createMonthlyPackage
+      tags: [monthly-packages]
+      summary: Create a monthly package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMonthlyPackageBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyPackage"
+
+  /monthly-packages/generate-all:
+    post:
+      operationId: generateAllMonthlyPackages
+      tags: [monthly-packages]
+      summary: Generate projects for all active packages for a given month
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: string
+                  description: "YYYY-MM format e.g. 2026-07"
+              required: [month]
+      responses:
+        "200":
+          description: Generation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratePackageResponse"
+
+  /monthly-packages/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      operationId: getMonthlyPackage
+      tags: [monthly-packages]
+      summary: Get a single monthly package
+      responses:
+        "200":
+          description: Monthly package
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyPackage"
+    patch:
+      operationId: updateMonthlyPackage
+      tags: [monthly-packages]
+      summary: Update a monthly package
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMonthlyPackageBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonthlyPackage"
+    delete:
+      operationId: deleteMonthlyPackage
+      tags: [monthly-packages]
+      summary: Delete a monthly package
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /monthly-packages/{id}/generate:
+    post:
+      operationId: generateMonthlyPackage
+      tags: [monthly-packages]
+      summary: Generate project for one package for a given month
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: string
+                  description: "YYYY-MM format e.g. 2026-07"
+              required: [month]
+      responses:
+        "201":
+          description: Generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratePackageResponse"
+        "409":
+          description: Already generated for this month
+
 components:
   schemas:
     HealthStatus:
@@ -2590,3 +3247,574 @@ components:
         - month
         - created
         - skipped
+
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        nameAr:
+          type: ["string", "null"]
+        nameFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        descriptionAr:
+          type: ["string", "null"]
+        descriptionFr:
+          type: ["string", "null"]
+        type:
+          type: string
+        status:
+          type: string
+        clientId:
+          type: ["integer", "null"]
+        clientName:
+          type: ["string", "null"]
+        budget:
+          type: ["number", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        coverImage:
+          type: ["string", "null"]
+        proposalContent:
+          type: ["string", "null"]
+        proposalContentAr:
+          type: ["string", "null"]
+        proposalContentFr:
+          type: ["string", "null"]
+        shared:
+          type: boolean
+        sharedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - type
+        - status
+        - shared
+        - createdAt
+        - updatedAt
+
+    CampaignDetail:
+      allOf:
+        - $ref: "#/components/schemas/Campaign"
+        - type: object
+          properties:
+            services:
+              type: array
+              items:
+                $ref: "#/components/schemas/CampaignService"
+            milestones:
+              type: array
+              items:
+                $ref: "#/components/schemas/CampaignMilestone"
+
+    CreateCampaignBody:
+      type: object
+      properties:
+        name:
+          type: string
+        nameAr:
+          type: ["string", "null"]
+        nameFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        descriptionAr:
+          type: ["string", "null"]
+        descriptionFr:
+          type: ["string", "null"]
+        type:
+          type: string
+        status:
+          type: string
+        clientId:
+          type: ["integer", "null"]
+        budget:
+          type: ["number", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        coverImage:
+          type: ["string", "null"]
+        proposalContent:
+          type: ["string", "null"]
+        proposalContentAr:
+          type: ["string", "null"]
+        proposalContentFr:
+          type: ["string", "null"]
+      required:
+        - name
+
+    UpdateCampaignBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        nameAr:
+          type: ["string", "null"]
+        nameFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        descriptionAr:
+          type: ["string", "null"]
+        descriptionFr:
+          type: ["string", "null"]
+        type:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+        clientId:
+          type: ["integer", "null"]
+        budget:
+          type: ["number", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        coverImage:
+          type: ["string", "null"]
+        proposalContent:
+          type: ["string", "null"]
+        proposalContentAr:
+          type: ["string", "null"]
+        proposalContentFr:
+          type: ["string", "null"]
+        shared:
+          type: ["boolean", "null"]
+
+    CampaignService:
+      type: object
+      properties:
+        id:
+          type: integer
+        campaignId:
+          type: integer
+        serviceId:
+          type: integer
+        customPrice:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+
+    AddCampaignServiceBody:
+      type: object
+      properties:
+        serviceId:
+          type: integer
+        customPrice:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - serviceId
+
+    CampaignMilestone:
+      type: object
+      properties:
+        id:
+          type: integer
+        campaignId:
+          type: integer
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: integer
+        dueDate:
+          type: ["string", "null"]
+        isCompleted:
+          type: boolean
+        completedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+      required:
+        - id
+        - campaignId
+        - title
+        - order
+        - isCompleted
+        - createdAt
+
+    AddCampaignMilestoneBody:
+      type: object
+      properties:
+        title:
+          type: string
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: ["integer", "null"]
+        dueDate:
+          type: ["string", "null"]
+      required:
+        - title
+
+    UpdateCampaignMilestoneBody:
+      type: object
+      properties:
+        title:
+          type: ["string", "null"]
+        titleAr:
+          type: ["string", "null"]
+        titleFr:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        order:
+          type: ["integer", "null"]
+        dueDate:
+          type: ["string", "null"]
+        isCompleted:
+          type: ["boolean", "null"]
+
+    Celebrity:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        image:
+          type: ["string", "null"]
+        audiences:
+          type: ["array", "null"]
+          items:
+            type: string
+        interests:
+          type: ["array", "null"]
+          items:
+            type: string
+        dateOfBirth:
+          type: ["string", "null"]
+        age:
+          type: ["integer", "null"]
+        tags:
+          type: ["array", "null"]
+          items:
+            type: string
+        priceMin:
+          type: ["number", "null"]
+        priceMax:
+          type: ["number", "null"]
+        bio:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+
+    CreateCelebrityBody:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        image:
+          type: ["string", "null"]
+        audiences:
+          type: ["array", "null"]
+          items:
+            type: string
+        interests:
+          type: ["array", "null"]
+          items:
+            type: string
+        dateOfBirth:
+          type: ["string", "null"]
+        tags:
+          type: ["array", "null"]
+          items:
+            type: string
+        priceMin:
+          type: ["number", "null"]
+        priceMax:
+          type: ["number", "null"]
+        bio:
+          type: ["string", "null"]
+      required:
+        - name
+
+    UpdateCelebrityBody:
+      type: object
+      properties:
+        name:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        email:
+          type: ["string", "null"]
+        image:
+          type: ["string", "null"]
+        audiences:
+          type: ["array", "null"]
+          items:
+            type: string
+        interests:
+          type: ["array", "null"]
+          items:
+            type: string
+        dateOfBirth:
+          type: ["string", "null"]
+        tags:
+          type: ["array", "null"]
+          items:
+            type: string
+        priceMin:
+          type: ["number", "null"]
+        priceMax:
+          type: ["number", "null"]
+        bio:
+          type: ["string", "null"]
+
+    CelebrityOffer:
+      type: object
+      properties:
+        id:
+          type: integer
+        celebrityId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        budget:
+          type: ["number", "null"]
+        status:
+          type: string
+        scenario:
+          type: ["string", "null"]
+        script:
+          type: ["string", "null"]
+        idea:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - celebrityId
+        - title
+        - status
+        - createdAt
+        - updatedAt
+
+    CreateCelebrityOfferBody:
+      type: object
+      properties:
+        celebrityId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        budget:
+          type: ["number", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - celebrityId
+        - title
+
+    UpdateCelebrityOfferBody:
+      type: object
+      properties:
+        title:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        budget:
+          type: ["number", "null"]
+        status:
+          type: ["string", "null"]
+        scenario:
+          type: ["string", "null"]
+        script:
+          type: ["string", "null"]
+        idea:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    MonthlyPackageItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        packageId:
+          type: integer
+        title:
+          type: string
+        price:
+          type: number
+        displayOrder:
+          type: integer
+      required:
+        - id
+        - packageId
+        - title
+        - price
+        - displayOrder
+
+    MonthlyPackage:
+      type: object
+      properties:
+        id:
+          type: integer
+        clientId:
+          type: integer
+        clientName:
+          type: ["string", "null"]
+        serviceId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        currency:
+          type: string
+        isActive:
+          type: boolean
+        notes:
+          type: ["string", "null"]
+        totalBudget:
+          type: number
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/MonthlyPackageItem"
+        generatedMonths:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+      required:
+        - id
+        - clientId
+        - title
+        - currency
+        - isActive
+        - totalBudget
+        - items
+        - generatedMonths
+        - createdAt
+
+    CreateMonthlyPackageBody:
+      type: object
+      properties:
+        clientId:
+          type: integer
+        serviceId:
+          type: ["integer", "null"]
+        title:
+          type: string
+        currency:
+          type: string
+          default: DZD
+        isActive:
+          type: boolean
+          default: true
+        notes:
+          type: ["string", "null"]
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+              price:
+                type: number
+              displayOrder:
+                type: integer
+            required:
+              - title
+              - price
+      required:
+        - clientId
+        - title
+        - items
+
+    UpdateMonthlyPackageBody:
+      type: object
+      properties:
+        title:
+          type: string
+        serviceId:
+          type: ["integer", "null"]
+        currency:
+          type: string
+        isActive:
+          type: boolean
+        notes:
+          type: ["string", "null"]
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: ["integer", "null"]
+              title:
+                type: string
+              price:
+                type: number
+              displayOrder:
+                type: integer
+            required:
+              - title
+              - price
+
+    GeneratePackageResponse:
+      type: object
+      properties:
+        month:
+          type: string
+        created:
+          type: integer
+        skipped:
+          type: integer
+        projects:
+          type: array
+          items:
+            type: object
+      required:
+        - month
+        - created
+        - skipped
+        - projects

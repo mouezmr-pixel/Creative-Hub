@@ -2,17 +2,12 @@ import { Router, type IRouter } from "express";
 import { eq, isNotNull } from "drizzle-orm";
 import { db, clientsTable, usersTable } from "@workspace/db";
 import bcrypt from "bcrypt";
-import { getSessionUser } from "../middlewares/auth";
+import { requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 router.get("/client-accounts", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-  if (user.role !== "admin") {
-    res.status(403).json({ error: "Admin only" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
   const rows = await db
     .select({
@@ -34,12 +29,7 @@ router.get("/client-accounts", async (req, res): Promise<void> => {
 });
 
 router.patch("/client-accounts/:id", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-  if (user.role !== "admin") {
-    res.status(403).json({ error: "Admin only" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
   const clientId = parseInt(req.params.id, 10);
   if (isNaN(clientId)) {
@@ -54,8 +44,8 @@ router.patch("/client-accounts/:id", async (req, res): Promise<void> => {
     res.status(400).json({ error: "Username must be 3-40 characters" });
     return;
   }
-  if (password !== undefined && (typeof password !== "string" || password.length < 4)) {
-    res.status(400).json({ error: "Password must be at least 4 characters" });
+  if (password !== undefined && (typeof password !== "string" || password.length < 8)) {
+    res.status(400).json({ error: "Password must be at least 8 characters" });
     return;
   }
   if (canViewProposal !== undefined && typeof canViewProposal !== "boolean") {

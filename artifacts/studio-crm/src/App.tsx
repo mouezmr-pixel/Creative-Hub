@@ -22,9 +22,16 @@ import CreativeDetail from "@/pages/creative-detail";
 import Settings from "@/pages/settings";
 import Services from "@/pages/services";
 import Leads from "@/pages/leads";
+import MyDues from "@/pages/my-dues";
 import Accounting from "@/pages/accounting";
 import WorkflowTemplates from "@/pages/workflow-templates";
 import ClientAccounts from "@/pages/client-accounts";
+import Billing from "@/pages/billing";
+import Campaigns from "@/pages/campaigns";
+import CampaignDetail from "@/pages/campaign-detail";
+import MonthlyPackages from "@/pages/monthly-packages";
+import Celebrities from "@/pages/celebrities";
+import CelebrityDetail from "@/pages/celebrity-detail";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +51,7 @@ function ProtectedRoute({ component: Component, roles }: { component: React.Comp
     if (!isLoading && !user) {
       setLocation("/login");
     } else if (!isLoading && user && roles && !roles.includes(user.role)) {
-      setLocation(user.role === "client" ? "/client-portal" : "/dashboard");
+      setLocation(user.role === "client" ? "/client-portal" : user.role === "photographer" ? "/projects" : "/dashboard");
     }
   }, [user, isLoading, roles, setLocation]);
 
@@ -72,7 +79,7 @@ function Router() {
       if (!user && location !== "/login" && location !== "/") {
         setLocation("/login");
       } else if (user && (location === "/login" || location === "/")) {
-        setLocation(user.role === "client" ? "/client-portal" : "/dashboard");
+        setLocation(user.role === "client" ? "/client-portal" : user.role === "photographer" ? "/projects" : "/dashboard");
       }
     }
   }, [user, isLoading, location, setLocation]);
@@ -83,16 +90,16 @@ function Router() {
         <Route path="/" component={Landing} />
         <Route path="/login" component={Login} />
         <Route path="/dashboard">
-          {() => <ProtectedRoute component={Dashboard} roles={["admin", "photographer"]} />}
+          {() => <ProtectedRoute component={Dashboard} roles={["admin"]} />}
         </Route>
         <Route path="/client-portal">
           {() => <ProtectedRoute component={ClientPortal} roles={["client"]} />}
         </Route>
         <Route path="/clients/:id">
-          {() => <ProtectedRoute component={ClientDetail} roles={["admin", "photographer"]} />}
+          {() => <ProtectedRoute component={ClientDetail} roles={["admin"]} />}
         </Route>
         <Route path="/clients">
-          {() => <ProtectedRoute component={Clients} roles={["admin", "photographer"]} />}
+          {() => <ProtectedRoute component={Clients} roles={["admin"]} />}
         </Route>
         <Route path="/projects/:id">
           {() => <ProtectedRoute component={ProjectDetail} roles={["admin", "photographer"]} />}
@@ -100,8 +107,14 @@ function Router() {
         <Route path="/projects">
           {() => <ProtectedRoute component={Projects} roles={["admin", "photographer"]} />}
         </Route>
+        <Route path="/my-dues">
+          {() => <ProtectedRoute component={MyDues} roles={["photographer"]} />}
+        </Route>
         <Route path="/services">
-          {() => <ProtectedRoute component={Services} roles={["admin", "photographer"]} />}
+          {() => <ProtectedRoute component={Services} roles={["admin"]} />}
+        </Route>
+        <Route path="/billing">
+          {() => <ProtectedRoute component={Billing} roles={["admin"]} />}
         </Route>
         <Route path="/photographers/:id">
           {() => <ProtectedRoute component={CreativeDetail} roles={["admin"]} />}
@@ -113,16 +126,31 @@ function Router() {
           {() => <ProtectedRoute component={Settings} roles={["admin"]} />}
         </Route>
         <Route path="/leads">
-          {() => <ProtectedRoute component={Leads} roles={["admin", "photographer"]} />}
+          {() => <ProtectedRoute component={Leads} roles={["admin"]} />}
         </Route>
         <Route path="/accounting">
-          {() => <ProtectedRoute component={Accounting} roles={["admin", "photographer"]} />}
+          {() => <ProtectedRoute component={Accounting} roles={["admin"]} />}
         </Route>
         <Route path="/workflow-templates">
           {() => <ProtectedRoute component={WorkflowTemplates} roles={["admin"]} />}
         </Route>
+        <Route path="/monthly-packages">
+          {() => <ProtectedRoute component={MonthlyPackages} roles={["admin"]} />}
+        </Route>
         <Route path="/client-accounts">
           {() => <ProtectedRoute component={ClientAccounts} roles={["admin"]} />}
+        </Route>
+        <Route path="/campaigns/:id">
+          {() => <ProtectedRoute component={CampaignDetail} roles={["admin"]} />}
+        </Route>
+        <Route path="/campaigns">
+          {() => <ProtectedRoute component={Campaigns} roles={["admin"]} />}
+        </Route>
+        <Route path="/celebrities/:id">
+          {() => <ProtectedRoute component={CelebrityDetail} roles={["admin"]} />}
+        </Route>
+        <Route path="/celebrities">
+          {() => <ProtectedRoute component={Celebrities} roles={["admin"]} />}
         </Route>
         <Route component={NotFound} />
       </Switch>

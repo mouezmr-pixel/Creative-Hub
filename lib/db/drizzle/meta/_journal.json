@@ -8,6 +8,13 @@
       "when": 1781951012637,
       "tag": "0000_right_impossible_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1753459200000,
+      "tag": "0001_add_celebrities",
+      "breakpoints": true
     }
   ]
 }

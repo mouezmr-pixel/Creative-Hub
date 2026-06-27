@@ -1,13 +1,12 @@
 import { Router, type IRouter } from "express";
 import { eq } from "drizzle-orm";
 import { db, servicesTable } from "@workspace/db";
-import { getSessionUser } from "../middlewares/auth";
+import { requireAccess } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 router.get("/services", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
   const services = await db
     .select()
@@ -24,13 +23,7 @@ router.get("/services", async (req, res): Promise<void> => {
 });
 
 router.post("/services", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role !== "admin") {
-    res.status(403).json({ error: "Admin access required" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
   const { title, description, price } = req.body;
   if (!title || price === undefined || price === null) {
@@ -53,13 +46,7 @@ router.post("/services", async (req, res): Promise<void> => {
 });
 
 router.delete("/services/:id", async (req, res): Promise<void> => {
-  const user = await getSessionUser(req, res);
-  if (!user) return;
-
-  if (user.role !== "admin") {
-    res.status(403).json({ error: "Admin access required" });
-    return;
-  }
+  if (!(await requireAccess(req, res, { allowedRoles: ["admin"] }))) return;
 
   const id = parseInt(req.params.id, 10);
   if (isNaN(id)) {

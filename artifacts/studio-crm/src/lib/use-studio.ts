@@ -17,8 +17,8 @@ export interface StudioSettings {
   invoiceNotes: string;
   logoUrl: string;
   stampUrl: string;
-  showStamp: string;
-  showSignature: string;
+  showStamp: boolean;
+  showSignature: boolean;
 }
 
 async function fetchSettings(): Promise<StudioSettings> {
@@ -48,8 +48,8 @@ export function useStudio() {
     invoiceNotes: data?.invoiceNotes || "",
     studioLogoUrl: data?.logoUrl || "",
     studioStampUrl: data?.stampUrl || "",
-    showStamp: data?.showStamp !== "false",
-    showSignature: data?.showSignature !== "false",
+    showStamp: data?.showStamp !== false,
+    showSignature: data?.showSignature !== false,
     isLoading,
   };
 }
