@@ -48,7 +48,7 @@ export function AccountStatementSection({ projects }: { projects: any[] }) {
         <h2 className="text-lg font-bold text-slate-800 dark:text-slate-200">{t("accountStatement")}</h2>
       </div>
 
-      {summary && summary.projectCount > 1 && (
+      {summary && summary.projectCount > 0 && (
         <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-950 dark:to-emerald-900/50 border-emerald-200 dark:border-emerald-800">
           <CardContent className="p-5">
             <div className="grid grid-cols-3 gap-4 text-center">

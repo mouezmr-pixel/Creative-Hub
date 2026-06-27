@@ -46,7 +46,7 @@ export function ProjectCard({ project }: { project: any }) {
         <div className="absolute top-0 start-0 w-full h-1 bg-primary/20">
           <div className="h-full bg-primary transition-all duration-500" style={{ width: `${project.progress}%` }} />
         </div>
-        <CardHeader className="pb-4">
+        <CardHeader className="pb-6">
           <div className="flex justify-between items-start gap-3">
             <div className="min-w-0">
               <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{project.title}</h2>
@@ -103,7 +103,10 @@ export function ProjectCard({ project }: { project: any }) {
         <CardContent>
           <div className="space-y-4 mb-6">
             {!notes?.length ? (
-              <p className="text-center text-sm text-muted-foreground py-4">{t("noNotesYet")}</p>
+              <div className="flex flex-col items-center justify-center py-6 text-muted-foreground/60">
+                <MessageSquare className="h-8 w-8 mb-2 opacity-40" />
+                <p className="text-sm">{t("noNotesYet")}</p>
+              </div>
             ) : (
               notes.map((note) => {
                 const isClient = note.authorRole === "client";

@@ -13,6 +13,9 @@ import Login from "@/pages/login";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import ClientPortal from "@/pages/client-portal";
+import OffersPage from "@/pages/client-portal/OffersPage";
+import ProjectsPage from "@/pages/client-portal/ProjectsPage";
+import AccountStatementPage from "@/pages/client-portal/AccountStatementPage";
 import Clients from "@/pages/clients";
 import ClientDetail from "@/pages/client-detail";
 import Projects from "@/pages/projects";
@@ -51,7 +54,7 @@ function ProtectedRoute({ component: Component, roles }: { component: React.Comp
     if (!isLoading && !user) {
       setLocation("/login");
     } else if (!isLoading && user && roles && !roles.includes(user.role)) {
-      setLocation(user.role === "client" ? "/client-portal" : user.role === "photographer" ? "/projects" : "/dashboard");
+      setLocation(user.role === "client" ? "/client-portal/projects" : user.role === "photographer" ? "/projects" : "/dashboard");
     }
   }, [user, isLoading, roles, setLocation]);
 
@@ -79,7 +82,7 @@ function Router() {
       if (!user && location !== "/login" && location !== "/") {
         setLocation("/login");
       } else if (user && (location === "/login" || location === "/")) {
-        setLocation(user.role === "client" ? "/client-portal" : user.role === "photographer" ? "/projects" : "/dashboard");
+        setLocation(user.role === "client" ? "/client-portal/projects" : user.role === "photographer" ? "/projects" : "/dashboard");
       }
     }
   }, [user, isLoading, location, setLocation]);
@@ -91,6 +94,15 @@ function Router() {
         <Route path="/login" component={Login} />
         <Route path="/dashboard">
           {() => <ProtectedRoute component={Dashboard} roles={["admin"]} />}
+        </Route>
+        <Route path="/client-portal/offers">
+          {() => <ProtectedRoute component={OffersPage} roles={["client"]} />}
+        </Route>
+        <Route path="/client-portal/projects">
+          {() => <ProtectedRoute component={ProjectsPage} roles={["client"]} />}
+        </Route>
+        <Route path="/client-portal/account-statement">
+          {() => <ProtectedRoute component={AccountStatementPage} roles={["client"]} />}
         </Route>
         <Route path="/client-portal">
           {() => <ProtectedRoute component={ClientPortal} roles={["client"]} />}

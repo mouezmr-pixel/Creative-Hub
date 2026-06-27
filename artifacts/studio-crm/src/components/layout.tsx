@@ -64,9 +64,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { label: t("dashboard"), icon: LayoutDashboard, href: "/dashboard", roles: ["admin"], show: true },
-    { label: t("yourProposals"), icon: FileText, href: "/client-portal#proposals", roles: ["client"], show: true },
-    { label: t("yourProjects"), icon: Briefcase, href: "/client-portal#projects", roles: ["client"], show: true },
-    { label: t("accountStatement"), icon: Wallet, href: "/client-portal#account-statement", roles: ["client"], show: true },
+    { label: t("yourProposals"), icon: FileText, href: "/client-portal/offers", roles: ["client"], show: true },
+    { label: t("yourProjects"), icon: Briefcase, href: "/client-portal/projects", roles: ["client"], show: true },
+    { label: t("accountStatement"), icon: Wallet, href: "/client-portal/account-statement", roles: ["client"], show: true },
     { label: t("clients"), icon: Users, href: "/clients", roles: ["admin"], show: true },
     { label: t("projects"), icon: Briefcase, href: "/projects", roles: ["admin", "photographer"], show: true },
     { label: t("myDues"), icon: Wallet, href: "/my-dues", roles: ["photographer"], show: true },
