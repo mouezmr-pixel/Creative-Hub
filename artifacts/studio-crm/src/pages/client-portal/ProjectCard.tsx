@@ -44,9 +44,12 @@ export function ProjectCard({ project }: { project: any }) {
 
   return (
     <Card className="bg-white dark:bg-slate-900 border-border shadow-sm overflow-hidden relative">
-      <div className="absolute top-0 start-0 w-full h-1 bg-primary/20">
-        <div className="h-full bg-primary transition-all duration-500" style={{ width: `${project.progress}%` }} />
-      </div>
+      <div className={cn(
+        "absolute top-0 start-0 w-full h-[3px]",
+        project.status === "pending" && "bg-amber-400",
+        project.status === "in_progress" && "bg-blue-400",
+        project.status === "completed" && "bg-emerald-400",
+      )} />
       <CardHeader className="pb-4">
         <div className="flex justify-between items-start gap-3">
           <div className="min-w-0">
