@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { useLanguage } from "@/lib/i18n";
 import { useListProjectNotes, useCreateProjectNote } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, MessageSquare, Send } from "lucide-react";
+import { ExternalLink, MessageSquare, Send, Calendar, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { MilestoneStepper } from "./MilestoneStepper";
+import { cn } from "@/lib/utils";
 
 export function ProjectCard({ project }: { project: any }) {
   const { t, isRTL } = useLanguage();
   const { data: notes, refetch: refetchNotes } = useListProjectNotes(project.id);
   const createNote = useCreateProjectNote();
   const [newNote, setNewNote] = useState("");
+  const [showNotes, setShowNotes] = useState(false);
   const { toast } = useToast();
 
   const handleAddNote = async (e: React.FormEvent) => {
@@ -41,114 +43,118 @@ export function ProjectCard({ project }: { project: any }) {
   };
 
   return (
-    <div className="space-y-6">
-      <Card className="bg-white dark:bg-slate-900 border-border shadow-sm overflow-hidden relative">
-        <div className="absolute top-0 start-0 w-full h-1 bg-primary/20">
-          <div className="h-full bg-primary transition-all duration-500" style={{ width: `${project.progress}%` }} />
+    <Card className="bg-white dark:bg-slate-900 border-border shadow-sm overflow-hidden relative">
+      <div className="absolute top-0 start-0 w-full h-1 bg-primary/20">
+        <div className="h-full bg-primary transition-all duration-500" style={{ width: `${project.progress}%` }} />
+      </div>
+      <CardHeader className="pb-4">
+        <div className="flex justify-between items-start gap-3">
+          <div className="min-w-0">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{project.title}</h2>
+            <p className="text-muted-foreground text-sm mt-0.5">
+              {t("photographer")}: {project.photographerName}
+            </p>
+          </div>
+          <Badge className={getStatusColor(project.status)} variant="outline">
+            {t(project.status as any) || project.status}
+          </Badge>
         </div>
-        <CardHeader className="pb-6">
-          <div className="flex justify-between items-start gap-3">
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <MilestoneStepper projectId={project.id} progress={project.progress} />
+
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+          <div className="flex items-center gap-1.5 text-muted-foreground">
+            <Calendar className="h-3.5 w-3.5" />
+            <span className="font-medium text-foreground" dir="ltr">
+              {project.startDate ? format(new Date(project.startDate), "MMM d, yyyy") : t("tbd")}
+            </span>
+            <span className="text-muted-foreground/60">&rarr;</span>
+            <span className="font-medium text-foreground" dir="ltr">
+              {project.deliveryDate ? format(new Date(project.deliveryDate), "MMM d, yyyy") : t("tbd")}
+            </span>
+          </div>
+        </div>
+
+        {project.weTransferLink && (
+          <div className="bg-primary/10 p-3 rounded-md border border-primary/20 flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">{project.title}</h2>
-              <p className="text-muted-foreground mt-1">
-                {t("photographer")}: {project.photographerName}
-              </p>
+              <p className="text-sm font-medium text-primary">{t("deliverablesAvailable")}</p>
+              <p className="text-xs text-muted-foreground">{t("downloadViaWeTransfer")}</p>
             </div>
-            <Badge className={getStatusColor(project.status)} variant="outline">
-              {t(project.status as any) || project.status}
-            </Badge>
+            <Button asChild size="sm" className="flex-shrink-0">
+              <a href={project.weTransferLink} target="_blank" rel="noreferrer">
+                {t("download")} <ExternalLink className="ms-2 h-4 w-4" />
+              </a>
+            </Button>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <MilestoneStepper projectId={project.id} progress={project.progress} />
+        )}
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="bg-background/50 p-3 rounded-md border border-border/50">
-              <span className="text-muted-foreground block mb-1">{t("startDate")}</span>
-              <span className="font-medium" dir="ltr">
-                {project.startDate ? format(new Date(project.startDate), "PPP") : t("tbd")}
-              </span>
-            </div>
-            <div className="bg-background/50 p-3 rounded-md border border-border/50">
-              <span className="text-muted-foreground block mb-1">{t("deliveryDate")}</span>
-              <span className="font-medium" dir="ltr">
-                {project.deliveryDate ? format(new Date(project.deliveryDate), "PPP") : t("tbd")}
-              </span>
-            </div>
-          </div>
+        <div className="border-t border-border pt-3">
+          <button
+            onClick={() => setShowNotes(!showNotes)}
+            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <span className="font-medium">{t("projectNotes")}</span>
+            {notes?.length ? (
+              <span className="text-xs bg-muted px-1.5 py-0.5 rounded-full">{notes.length}</span>
+            ) : null}
+            <ChevronDown className={cn("h-4 w-4 ms-auto transition-transform", showNotes && "rotate-180")} />
+          </button>
 
-          {project.weTransferLink && (
-            <div className="bg-primary/10 p-4 rounded-md border border-primary/20 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <h4 className="font-medium text-primary">{t("deliverablesAvailable")}</h4>
-                <p className="text-sm text-muted-foreground">{t("downloadViaWeTransfer")}</p>
-              </div>
-              <Button asChild size="sm" className="flex-shrink-0">
-                <a href={project.weTransferLink} target="_blank" rel="noreferrer">
-                  {t("download")} <ExternalLink className="ms-2 h-4 w-4" />
-                </a>
-              </Button>
+          {showNotes && (
+            <div className="mt-4 space-y-4">
+              {!notes?.length ? (
+                <div className="flex flex-col items-center justify-center py-6 text-muted-foreground/60">
+                  <MessageSquare className="h-8 w-8 mb-2 opacity-40" />
+                  <p className="text-sm">{t("noNotesYet")}</p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {notes.map((note) => {
+                    const isClient = note.authorRole === "client";
+                    return (
+                      <div
+                        key={note.id}
+                        className={`p-3 rounded-lg border ${
+                          isClient
+                            ? "bg-background/50 border-border/50 ms-6"
+                            : "bg-primary/5 border-primary/20 me-6"
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-1.5 gap-2">
+                          <span className="font-medium text-xs">
+                            {note.authorName}
+                            <span className="text-muted-foreground font-normal ms-1">
+                              ({note.authorRole})
+                            </span>
+                          </span>
+                          <span className="text-[10px] text-muted-foreground flex-shrink-0" dir="ltr">
+                            {format(new Date(note.createdAt), "MMM d, h:mm a")}
+                          </span>
+                        </div>
+                        <p className="text-sm whitespace-pre-wrap">{note.content}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              <form onSubmit={handleAddNote} className="flex gap-2">
+                <Input
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder={t("addCommentOrQuestion")}
+                  className="bg-background/50 border-input flex-1 h-9 text-sm"
+                />
+                <Button type="submit" size="sm" disabled={!newNote.trim() || createNote.isPending}>
+                  <Send className="h-4 w-4" />
+                </Button>
+              </form>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      <Card className="bg-card/50 backdrop-blur border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center text-lg gap-2">
-            <MessageSquare className="h-5 w-5 text-primary flex-shrink-0" />
-            {t("projectNotes")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4 mb-6">
-            {!notes?.length ? (
-              <div className="flex flex-col items-center justify-center py-6 text-muted-foreground/60">
-                <MessageSquare className="h-8 w-8 mb-2 opacity-40" />
-                <p className="text-sm">{t("noNotesYet")}</p>
-              </div>
-            ) : (
-              notes.map((note) => {
-                const isClient = note.authorRole === "client";
-                return (
-                  <div
-                    key={note.id}
-                    className={`p-4 rounded-lg border ${
-                      isClient
-                        ? "bg-background/50 border-border/50 ms-8"
-                        : "bg-primary/5 border-primary/20 me-8"
-                    }`}
-                  >
-                    <div className="flex justify-between items-start mb-2 gap-2">
-                      <span className="font-medium text-sm">
-                        {note.authorName}{" "}
-                        <span className="text-muted-foreground text-xs font-normal">
-                          ({note.authorRole})
-                        </span>
-                      </span>
-                      <span className="text-xs text-muted-foreground flex-shrink-0" dir="ltr">
-                        {format(new Date(note.createdAt), "MMM d, h:mm a")}
-                      </span>
-                    </div>
-                    <p className="text-sm whitespace-pre-wrap">{note.content}</p>
-                  </div>
-                );
-              })
-            )}
-          </div>
-          <form onSubmit={handleAddNote} className="flex gap-2">
-            <Input
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-              placeholder={t("addCommentOrQuestion")}
-              className="bg-background/50 border-input flex-1"
-            />
-            <Button type="submit" disabled={!newNote.trim() || createNote.isPending}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
