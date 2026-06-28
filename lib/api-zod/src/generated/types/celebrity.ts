@@ -32,9 +32,17 @@ export interface Celebrity {
   /** @nullable */
   bio?: string | null;
   /** @nullable */
+  platforms?: Platform[] | null;
+  /** @nullable */
   userId?: number | null;
   /** @nullable */
   loginUsername?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Platform {
+  name: string;
+  /** @nullable */
+  url?: string | null;
 }

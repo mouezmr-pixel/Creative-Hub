@@ -1154,11 +1154,19 @@ export interface Celebrity {
   /** @nullable */
   bio?: string | null;
   /** @nullable */
+  platforms?: Platform[] | null;
+  /** @nullable */
   userId?: number | null;
   /** @nullable */
   loginUsername?: string | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Platform {
+  name: string;
+  /** @nullable */
+  url?: string | null;
 }
 
 export interface CreateCelebrityBody {
@@ -1183,6 +1191,8 @@ export interface CreateCelebrityBody {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  platforms?: Platform[] | null;
   /** @nullable */
   password?: string | null;
 }
@@ -1210,6 +1220,8 @@ export interface UpdateCelebrityBody {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  platforms?: Platform[] | null;
 }
 
 export interface MonthlyPackageItem {

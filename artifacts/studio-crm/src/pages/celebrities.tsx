@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Link } from "wouter";
 import {
   useListCelebrities,
@@ -27,18 +27,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import {
-  Plus, Search, Star, Phone, Mail, Tag, Users, DollarSign, Trash2, ImageIcon, Upload,
+  Plus, Search, Star, Upload,
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Checkbox } from "@/components/ui/checkbox";
+import { normalizeArray } from "@/lib/utils";
+import { CelebrityAvatar } from "@/components/celebrity-avatar";
 
 const AUDIENCE_OPTIONS = ["children", "teens", "youth", "adults", "families", "all"] as const;
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const PLATFORM_COLORS: Record<string, string> = {
+  instagram: "#E1306C",
+  tiktok: "#000000",
+  youtube: "#FF0000",
+  twitter: "#1DA1F2",
+  snapchat: "#FFFC00",
+  facebook: "#1877F2",
+};
 
 export default function Celebrities() {
   const { user } = useAuth();
@@ -46,9 +55,8 @@ export default function Celebrities() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [audienceFilter, setAudienceFilter] = useState<string>("all");
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [createdCredentials, setCreatedCredentials] = useState<{ username: string; password: string } | null>(null);
 
@@ -59,17 +67,47 @@ export default function Celebrities() {
   const { register, handleSubmit, reset, setValue, watch } = useForm<any>();
   const selectedAudiences = (watch("audiences") || []) as string[];
 
-  const filtered = celebrities.filter((c) => {
-    const mSearch = !search || c.name.toLowerCase().includes(search.toLowerCase()) ||
-      (c.email && c.email.toLowerCase().includes(search.toLowerCase())) ||
-      (c.phone && c.phone.includes(search));
-    const mAudience = audienceFilter === "all" || (c.audiences && c.audiences.includes(audienceFilter));
-    const mPriceMin = !priceMin || (c.priceMin != null && Number(c.priceMin) <= parseFloat(priceMin)) ||
-      (c.priceMax != null && Number(c.priceMax) >= parseFloat(priceMin));
-    const mPriceMax = !priceMax || (c.priceMin != null && Number(c.priceMin) <= parseFloat(priceMax)) ||
-      (c.priceMax != null && Number(c.priceMax) >= parseFloat(priceMin));
-    return mSearch && mAudience && mPriceMin && mPriceMax;
-  });
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    celebrities.forEach((c) => {
+      const tags = normalizeArray(c.tags);
+      tags.forEach((tag) => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  }, [celebrities]);
+
+  const filtered = useMemo(() => {
+    let result = [...celebrities];
+
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((c) =>
+        c.name.toLowerCase().includes(q) ||
+        (c.email && c.email.toLowerCase().includes(q)) ||
+        (c.phone && c.phone.includes(q))
+      );
+    }
+
+    if (categoryFilter !== "all") {
+      result = result.filter((c) => {
+        const tags = normalizeArray(c.tags);
+        return tags.includes(categoryFilter);
+      });
+    }
+
+    switch (sortBy) {
+      case "priceHigh":
+        result.sort((a, b) => (b.priceMax ?? b.priceMin ?? 0) - (a.priceMax ?? a.priceMin ?? 0));
+        break;
+      case "priceLow":
+        result.sort((a, b) => (a.priceMin ?? a.priceMax ?? 0) - (b.priceMin ?? b.priceMax ?? 0));
+        break;
+      default:
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
+    return result;
+  }, [celebrities, search, categoryFilter, sortBy]);
 
   const resetForm = () => reset();
   const [isUploading, setIsUploading] = useState(false);
@@ -111,17 +149,6 @@ export default function Celebrities() {
     }
   };
 
-  const safeParseJsonArray = (val: string) => {
-    if (!val?.trim()) return null;
-    try {
-      const parsed = JSON.parse(val);
-      if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
-      return [String(parsed)].filter(Boolean);
-    } catch {
-      return val.split(",").map((s: string) => s.trim()).filter(Boolean);
-    }
-  };
-
   const onSubmit = async (data: any) => {
     try {
       const res = await createCelebrity.mutateAsync({
@@ -131,9 +158,9 @@ export default function Celebrities() {
           email: data.email || null,
           image: data.image || null,
           audiences: data.audiences?.length ? data.audiences : null,
-          interests: data.interests ? safeParseJsonArray(data.interests) : null,
+          interests: data.interests ? normalizeArray(data.interests) : null,
           dateOfBirth: data.dateOfBirth || null,
-          tags: data.tags ? safeParseJsonArray(data.tags) : null,
+          tags: data.tags ? normalizeArray(data.tags) : null,
           priceMin: data.priceMin ? parseFloat(data.priceMin) : null,
           priceMax: data.priceMax ? parseFloat(data.priceMax) : null,
           bio: data.bio || null,
@@ -155,39 +182,38 @@ export default function Celebrities() {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm(t("deleteCelebrityConfirm"))) return;
-    try {
-      await deleteCelebrity.mutateAsync({ id });
-      queryClient.invalidateQueries({ queryKey: getListCelebritiesQueryKey() });
-      toast({ description: t("celebrityDeleted") });
-    } catch {
-      toast({ variant: "destructive", description: t("failedToDeleteCelebrity") });
-    }
-  };
-
   const formatPriceRange = (c: typeof celebrities[0]) => {
     if (c.priceMin != null && c.priceMax != null) {
-      return `${Number(c.priceMin).toLocaleString()} - ${Number(c.priceMax).toLocaleString()} DZD`;
+      return `${Number(c.priceMin).toLocaleString()} \u2013 ${Number(c.priceMax).toLocaleString()} DZD`;
     }
     if (c.priceMin != null) return `${Number(c.priceMin).toLocaleString()}+ DZD`;
-    if (c.priceMax != null) return `0 - ${Number(c.priceMax).toLocaleString()} DZD`;
+    if (c.priceMax != null) return `0 \u2013 ${Number(c.priceMax).toLocaleString()} DZD`;
+    return null;
+  };
+
+  const getFirstPlatform = (c: typeof celebrities[0]): string | null => {
+    if (!c.platforms || !Array.isArray(c.platforms) || c.platforms.length === 0) return null;
+    const p = c.platforms[0];
+    if (typeof p === "string") return p;
+    if (p && typeof p === "object" && "name" in p) return (p as any).name;
     return null;
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100">
             {t("celebrities")}
           </h1>
-          <p className="text-muted-foreground text-sm">{t("celebritiesDesc")}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("celebrityCount").replace("{n}", String(celebrities.length))}
+          </p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" />
+            <Button className="gap-1.5 text-xs h-9 px-3">
+              <Plus className="w-3.5 h-3.5" />
               {t("newCelebrity")}
             </Button>
           </DialogTrigger>
@@ -314,158 +340,127 @@ export default function Celebrities() {
         </Dialog>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className="flex gap-2 items-center">
+        <div className="relative flex-1 min-w-0">
+          <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder={t("searchCelebrities")}
-            className="ps-9"
+            className="ps-8 h-9 text-xs"
           />
         </div>
-        <Select value={audienceFilter} onValueChange={setAudienceFilter}>
-          <SelectTrigger className="w-full sm:w-36">
-            <SelectValue placeholder={t("audience")} />
+        <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <SelectTrigger className="w-auto min-w-[100px] h-9 text-xs">
+            <SelectValue placeholder={t("allCategories")} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("all")}</SelectItem>
-            {AUDIENCE_OPTIONS.map((a) => (
-              <SelectItem key={a} value={a}>{t(`audience_${a}`)}</SelectItem>
+            <SelectItem value="all">{t("allCategories")}</SelectItem>
+            {allTags.map((tag) => (
+              <SelectItem key={tag} value={tag}>{tag}</SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <div className="flex items-center gap-2">
-          <Input
-            type="number"
-            placeholder={t("priceMin")}
-            value={priceMin}
-            onChange={(e) => setPriceMin(e.target.value)}
-            className="w-28"
-          />
-          <span className="text-muted-foreground">—</span>
-          <Input
-            type="number"
-            placeholder={t("priceMax")}
-            value={priceMax}
-            onChange={(e) => setPriceMax(e.target.value)}
-            className="w-28"
-          />
-        </div>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-auto min-w-[110px] h-9 text-xs">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">{t("sortNewest")}</SelectItem>
+            <SelectItem value="priceHigh">{t("sortPriceHigh")}</SelectItem>
+            <SelectItem value="priceLow">{t("sortPriceLow")}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">{t("loading")}</div>
+        <div className="text-center py-12 text-muted-foreground text-xs">{t("loading")}</div>
       ) : !filtered.length ? (
-        <div className="text-center py-12 text-muted-foreground bg-card/30 rounded-lg border border-border">
-          <Star className="h-12 w-12 mx-auto mb-3 text-muted-foreground/40" />
-          <p>{t("noCelebritiesYet")}</p>
+        <div className="text-center py-12 text-muted-foreground bg-card/30 border border-border">
+          <Star className="h-10 w-10 mx-auto mb-2 text-muted-foreground/40" />
+          <p className="text-xs">{t("noCelebritiesYet")}</p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((celebrity, i) => (
-            <motion.div
-              key={celebrity.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-            >
-              <Link href={`/celebrities/${celebrity.id}`}>
-                <Card className="cursor-pointer hover:shadow-md transition-all border-border/80 h-full group">
-                  <CardContent className="p-5">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <Star className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                          <h3 className="font-semibold text-slate-900 dark:text-slate-100 truncate">
-                            {celebrity.name}
-                          </h3>
-                        </div>
-                        {celebrity.audiences && celebrity.audiences.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
-                            {celebrity.audiences.map((a: string, idx: number) => (
-                              <Badge key={idx} variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                                <Users className="h-3 w-3 mr-1" />
-                                {t(`audience_${a}` as any) || a}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <button
-                        onClick={(e) => { e.preventDefault(); handleDelete(celebrity.id); }}
-                        className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 transition-all shrink-0"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+        <div className="grid grid-cols-3 gap-2.5">
+          {filtered.map((celebrity) => {
+            const tags = normalizeArray(celebrity.tags);
+            const audiences = normalizeArray(celebrity.audiences);
+            const interests = normalizeArray(celebrity.interests);
+            const platform = getFirstPlatform(celebrity);
+
+            return (
+              <Link key={celebrity.id} href={`/celebrities/${celebrity.id}`}>
+                <Card className="cursor-pointer hover:border-border-strong transition-all border-border overflow-hidden h-full">
+                  <CelebrityAvatar
+                    name={celebrity.name}
+                    image={celebrity.image}
+                    size="full"
+                  />
+                  <CardContent className="p-2.5 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-slate-900 dark:text-slate-100 truncate">
+                        {celebrity.name}
+                      </span>
+                      <Star className="h-3.5 w-3.5 text-amber-500 shrink-0" />
                     </div>
 
-                    <div className="space-y-1.5 text-sm text-muted-foreground">
-                      {celebrity.image && (
-                        <div className="flex items-center gap-2">
-                          <ImageIcon className="h-3.5 w-3.5" />
-                          <span className="truncate text-xs">{celebrity.image}</span>
-                        </div>
-                      )}
-                      {celebrity.email && (
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-3.5 w-3.5" />
-                          <span className="truncate">{celebrity.email}</span>
-                        </div>
-                      )}
-                      {celebrity.phone && (
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-3.5 w-3.5" />
-                          <span dir="ltr">{celebrity.phone}</span>
-                        </div>
-                      )}
+                    {formatPriceRange(celebrity) && (
+                      <p className="text-xs font-medium" style={{ color: "#EF9F27" }}>
+                        {formatPriceRange(celebrity)}
+                      </p>
+                    )}
+
+                    <div className="flex flex-wrap gap-1">
+                      {tags.slice(0, 2).map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] px-1.5 py-0.5 rounded-full"
+                          style={{ background: "#EEEDFE", color: "#534AB7" }}
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {audiences.slice(0, 1).map((a, idx) => (
+                        <span
+                          key={`a-${idx}`}
+                          className="text-[10px] px-1.5 py-0.5 rounded-full"
+                          style={{ background: "#E1F5EE", color: "#0F6E56" }}
+                        >
+                          {t(`audience_${a}` as any) || a}
+                        </span>
+                      ))}
+                      {interests.slice(0, 1).map((interest, idx) => (
+                        <span
+                          key={`i-${idx}`}
+                          className="text-[10px] px-1.5 py-0.5 rounded-full"
+                          style={{ background: "#FBEAF0", color: "#993556" }}
+                        >
+                          {interest}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground pt-0.5">
                       {celebrity.age != null && (
-                        <div className="flex items-center gap-2">
-                          <Star className="h-3.5 w-3.5" />
+                        <>
                           <span>{celebrity.age} {t("age")}</span>
-                        </div>
+                          {platform && <span className="text-border-strong">·</span>}
+                        </>
                       )}
-                      {formatPriceRange(celebrity) && (
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-3.5 w-3.5" />
-                          <span className="font-medium text-slate-700 dark:text-slate-300" dir="ltr">
-                            {formatPriceRange(celebrity)}
-                          </span>
-                        </div>
+                      {platform && (
+                        <span
+                          className="truncate"
+                          style={{ color: PLATFORM_COLORS[platform.toLowerCase()] || undefined }}
+                        >
+                          {platform}
+                        </span>
                       )}
                     </div>
-
-                    {celebrity.tags && celebrity.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border/50">
-                        {celebrity.tags.map((tag: string, idx: number) => (
-                          <span
-                            key={idx}
-                            className="inline-flex items-center gap-1 text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-full"
-                          >
-                            <Tag className="h-3 w-3" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {celebrity.interests && celebrity.interests.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {celebrity.interests.slice(0, 3).map((interest: string, idx: number) => (
-                          <span key={idx} className="text-xs bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 px-2 py-0.5 rounded-full">
-                            {interest}
-                          </span>
-                        ))}
-                        {celebrity.interests.length > 3 && (
-                          <span className="text-xs text-muted-foreground">+{celebrity.interests.length - 3}</span>
-                        )}
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               </Link>
-            </motion.div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

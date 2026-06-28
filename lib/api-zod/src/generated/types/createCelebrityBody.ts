@@ -29,5 +29,7 @@ export interface CreateCelebrityBody {
   /** @nullable */
   bio?: string | null;
   /** @nullable */
+  platforms?: { name: string; url?: string | null }[] | null;
+  /** @nullable */
   password?: string | null;
 }

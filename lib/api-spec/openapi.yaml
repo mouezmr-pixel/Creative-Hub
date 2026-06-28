@@ -3522,8 +3522,12 @@ components:
           type: ["number", "null"]
         priceMax:
           type: ["number", "null"]
-        bio:
+         bio:
           type: ["string", "null"]
+         platforms:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/Platform"
         createdAt:
           type: string
         updatedAt:
@@ -3533,6 +3537,16 @@ components:
         - name
         - createdAt
         - updatedAt
+
+    Platform:
+      type: object
+      properties:
+        name:
+          type: string
+        url:
+          type: ["string", "null"]
+      required:
+        - name
 
     CreateCelebrityBody:
       type: object
@@ -3565,6 +3579,10 @@ components:
           type: ["number", "null"]
         bio:
           type: ["string", "null"]
+        platforms:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/Platform"
       required:
         - name
 
@@ -3599,6 +3617,10 @@ components:
           type: ["number", "null"]
         bio:
           type: ["string", "null"]
+        platforms:
+          type: ["array", "null"]
+          items:
+            $ref: "#/components/schemas/Platform"
 
     CelebrityOffer:
       type: object

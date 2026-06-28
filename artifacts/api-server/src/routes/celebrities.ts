@@ -19,14 +19,27 @@ const router: IRouter = Router();
 
 function parseArray(val: unknown): string[] {
   if (!val) return [];
-  if (Array.isArray(val)) return val;
+  if (Array.isArray(val)) return val.map(String);
   if (typeof val === "string") {
     const trimmed = val.trim();
     if (!trimmed) return [];
     if (trimmed.startsWith("[")) {
-      try { const p = JSON.parse(trimmed); if (Array.isArray(p)) return p; } catch {}
+      try { const p = JSON.parse(trimmed); if (Array.isArray(p)) return p.map(String); } catch {}
     }
     return trimmed.split(",").map((s) => s.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function parsePlatforms(val: unknown): { name: string; url?: string | null }[] {
+  if (!val) return [];
+  if (Array.isArray(val)) return val.map((p: any) => ({ name: String(p.name ?? ""), url: p.url ?? null }));
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    if (!trimmed) return [];
+    if (trimmed.startsWith("[")) {
+      try { const p = JSON.parse(trimmed); if (Array.isArray(p)) return p.map((x: any) => ({ name: String(x.name ?? ""), url: x.url ?? null })); } catch {}
+    }
   }
   return [];
 }
@@ -67,6 +80,7 @@ async function formatCelebrity(c: typeof celebritiesTable.$inferSelect) {
     priceMin: c.minPrice ? parseFloat(c.minPrice as unknown as string) : null,
     priceMax: c.maxPrice ? parseFloat(c.maxPrice as unknown as string) : null,
     bio: c.bio,
+    platforms: parsePlatforms(c.platforms),
     userId: c.userId,
     loginUsername,
     archivedAt: c.archivedAt,
@@ -96,7 +110,7 @@ router.get("/celebrities", async (req, res): Promise<void> => {
 router.post("/celebrities", async (req, res): Promise<void> => {
   if (!(await requireAdmin(req, res))) return;
   try {
-    const { name, phone, email, image, audiences, interests, dateOfBirth, tags, priceMin, priceMax, bio, password } = req.body;
+    const { name, phone, email, image, audiences, interests, dateOfBirth, tags, priceMin, priceMax, bio, password, platforms } = req.body;
 
     if (!name) {
       res.status(400).json({ error: "name is required" });
@@ -141,6 +155,7 @@ router.post("/celebrities", async (req, res): Promise<void> => {
         minPrice: priceMin != null ? String(priceMin) : null,
         maxPrice: priceMax != null ? String(priceMax) : null,
         bio: bio ?? null,
+        platforms: toDbValue(platforms),
         userId,
       })
       .returning();
@@ -194,6 +209,7 @@ router.patch("/celebrities/:id", async (req, res): Promise<void> => {
   if (req.body.priceMin !== undefined) updateData.minPrice = req.body.priceMin != null ? String(req.body.priceMin) : null;
   if (req.body.priceMax !== undefined) updateData.maxPrice = req.body.priceMax != null ? String(req.body.priceMax) : null;
   if (req.body.bio !== undefined) updateData.bio = req.body.bio;
+  if (req.body.platforms !== undefined) updateData.platforms = toDbValue(req.body.platforms);
 
   if (Object.keys(updateData).length === 0) {
     const formatted = await formatCelebrity(existing[0]);

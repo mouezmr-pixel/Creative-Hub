@@ -29,4 +29,6 @@ export interface UpdateCelebrityBody {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  platforms?: { name: string; url?: string | null }[] | null;
 }

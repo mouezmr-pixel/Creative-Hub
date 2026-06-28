@@ -16,6 +16,7 @@ export const celebritiesTable = pgTable("celebrities", {
   minPrice: numeric("min_price", { precision: 10, scale: 2 }),
   maxPrice: numeric("max_price", { precision: 10, scale: 2 }),
   bio: text("bio"),
+  platforms: text("platforms"),
   userId: integer("user_id").references(() => usersTable.id, { onDelete: "set null" }),
   archivedAt: timestamp("archived_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
