@@ -18,6 +18,8 @@ import settingsRouter from "./settings";
 import campaignsRouter from "./campaigns";
 import celebritiesRouter from "./celebrities";
 import celebrityOffersRouter from "./celebrity-offers";
+import celebrityAccountsRouter from "./celebrity-accounts";
+import celebrityPortalRouter from "./celebrity-portal";
 import monthlyPackagesRouter from "./monthly-packages";
 
 const router: IRouter = Router();
@@ -41,6 +43,8 @@ router.use(settingsRouter);
 router.use(campaignsRouter);
 router.use(celebritiesRouter);
 router.use(celebrityOffersRouter);
+router.use(celebrityAccountsRouter);
+router.use(celebrityPortalRouter);
 router.use(monthlyPackagesRouter);
 
 export default router;

@@ -140,6 +140,12 @@ export async function requireProjectAccess(
   // Admin or canManageAllProjects → full access
   if (user.role === "admin" || user.canManageAllProjects) return project;
 
+  // Celebrity → no project access
+  if (user.role === "celebrity") {
+    res.status(403).json({ error: "Access denied" });
+    return null;
+  }
+
   // Client → must own the project via clientsTable.userId
   if (user.role === "client") {
     const [clientRecord] = await db
@@ -179,6 +185,11 @@ export async function buildProjectScopeConditions(
   const conditions: any[] = [];
 
   if (user.role === "admin" || user.canManageAllProjects) {
+    return { user, conditions };
+  }
+
+  if (user.role === "celebrity") {
+    conditions.push(eq(projectsTable.id, -1));
     return { user, conditions };
   }
 

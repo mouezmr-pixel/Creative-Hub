@@ -1011,6 +1011,22 @@ const translations = {
     approve: "Approve",
     reject: "Reject",
     complete: "Complete",
+
+    // --- Celebrity Accounts ---
+    roleCelebrity: "Celebrity",
+    celebrityAccounts: "Celebrity Accounts",
+    celebrityAccountsDesc: "Manage login credentials for celebrities",
+    searchCelebrityAccounts: "Search by name, phone or email…",
+    noCelebrityAccounts: "No celebrities with portal accounts yet. Create a celebrity with a password to get started.",
+    editCelebrityAccount: "Edit Account — ",
+    celebrityPortalAccess: "Celebrity Portal Access",
+    passwordCreatesCelebrityLogin: "Password — creates a login account for the celebrity",
+    setPortalPassword: "Set a portal password...",
+    celebrityLoginUrl: "Login URL to share with celebrity",
+    celebrityPortal: "Portal",
+    yourOffers: "My Offers",
+    offersDescription: "View and track offers from the studio",
+    noOffersFound: "No offers yet.",
   },
 
   fr: {
@@ -1992,6 +2008,22 @@ const translations = {
     approve: "Approuver",
     reject: "Rejeter",
     complete: "Terminer",
+
+    // --- Celebrity Accounts ---
+    roleCelebrity: "Célébrité",
+    celebrityAccounts: "Comptes des célébrités",
+    celebrityAccountsDesc: "Gérer les identifiants de connexion des célébrités",
+    searchCelebrityAccounts: "Rechercher par nom, téléphone ou email…",
+    noCelebrityAccounts: "Aucune célébrité avec compte portail. Créez une célébrité avec un mot de passe pour commencer.",
+    editCelebrityAccount: "Modifier le compte — ",
+    celebrityPortalAccess: "Accès Portail Célébrité",
+    passwordCreatesCelebrityLogin: "Mot de passe — crée un compte de connexion pour la célébrité",
+    setPortalPassword: "Définir un mot de passe portail...",
+    celebrityLoginUrl: "URL de connexion à partager avec la célébrité",
+    celebrityPortal: "Portail",
+    yourOffers: "Mes Offres",
+    offersDescription: "Voir et suivre les offres du studio",
+    noOffersFound: "Aucune offre pour l'instant.",
   },
 
   ar: {
@@ -2973,6 +3005,22 @@ const translations = {
     approve: "موافقة",
     reject: "رفض",
     complete: "إكمال",
+
+    // --- Celebrity Accounts ---
+    roleCelebrity: "مشهور",
+    celebrityAccounts: "حسابات المشاهير",
+    celebrityAccountsDesc: "إدارة بيانات تسجيل دخول المشاهير",
+    searchCelebrityAccounts: "البحث بالاسم أو الهاتف أو البريد...",
+    noCelebrityAccounts: "لا يوجد مشاهير بحسابات بوابة بعد. أنشئ مشهوراً بكلمة مرور للبدء.",
+    editCelebrityAccount: "تعديل الحساب — ",
+    celebrityPortalAccess: "دخول بوابة المشاهير",
+    passwordCreatesCelebrityLogin: "كلمة المرور — تنشئ حساب دخول للمشهور",
+    setPortalPassword: "تعيين كلمة مرور للبوابة...",
+    celebrityLoginUrl: "رابط تسجيل الدخول للمشاركة مع المشهور",
+    celebrityPortal: "البوابة",
+    yourOffers: "عروضي",
+    offersDescription: "عرض ومتابعة العروض من الاستوديو",
+    noOffersFound: "لا توجد عروض بعد.",
   },
 };
 

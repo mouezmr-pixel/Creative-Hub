@@ -15,6 +15,20 @@
       "when": 1753459200000,
       "tag": "0001_add_celebrities",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1757000000000,
+      "tag": "0002_add_missing_columns_and_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781952000000,
+      "tag": "0003_add_user_id_to_celebrities",
+      "breakpoints": true
     }
   ]
 }

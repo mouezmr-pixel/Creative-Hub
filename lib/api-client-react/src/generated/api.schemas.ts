@@ -29,6 +29,7 @@ export const UserRole = {
   admin: 'admin',
   photographer: 'photographer',
   client: 'client',
+  celebrity: 'celebrity',
 } as const;
 
 export type UserPaymentType = typeof UserPaymentType[keyof typeof UserPaymentType];
@@ -1152,6 +1153,10 @@ export interface Celebrity {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  userId?: number | null;
+  /** @nullable */
+  loginUsername?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1178,6 +1183,8 @@ export interface CreateCelebrityBody {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  password?: string | null;
 }
 
 export interface UpdateCelebrityBody {

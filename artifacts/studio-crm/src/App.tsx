@@ -35,6 +35,9 @@ import CampaignDetail from "@/pages/campaign-detail";
 import MonthlyPackages from "@/pages/monthly-packages";
 import Celebrities from "@/pages/celebrities";
 import CelebrityDetail from "@/pages/celebrity-detail";
+import CelebrityAccounts from "@/pages/celebrity-accounts";
+import CelebrityPortal from "@/pages/celebrity-portal";
+import CelebrityOffersPage from "@/pages/celebrity-portal/OffersPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,7 +48,7 @@ const queryClient = new QueryClient({
   },
 });
 
-function ProtectedRoute({ component: Component, roles }: { component: React.ComponentType; roles?: string[] }) {
+function ProtectedRoute({ component: Component, roles }: { component: React.ComponentType; roles?: readonly string[] }) {
   const { user, isLoading } = useAuth();
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
@@ -54,7 +57,12 @@ function ProtectedRoute({ component: Component, roles }: { component: React.Comp
     if (!isLoading && !user) {
       setLocation("/login");
     } else if (!isLoading && user && roles && !roles.includes(user.role)) {
-      setLocation(user.role === "client" ? "/client-portal/projects" : user.role === "photographer" ? "/projects" : "/dashboard");
+      setLocation(
+        user.role === "client" ? "/client-portal/projects"
+          : user.role === "celebrity" ? "/celebrity-portal/offers"
+          : user.role === "photographer" ? "/projects"
+          : "/dashboard"
+      );
     }
   }, [user, isLoading, roles, setLocation]);
 
@@ -82,7 +90,12 @@ function Router() {
       if (!user && location !== "/login" && location !== "/") {
         setLocation("/login");
       } else if (user && (location === "/login" || location === "/")) {
-        setLocation(user.role === "client" ? "/client-portal/projects" : user.role === "photographer" ? "/projects" : "/dashboard");
+        setLocation(
+          user.role === "client" ? "/client-portal/projects"
+            : user.role === "celebrity" ? "/celebrity-portal/offers"
+            : user.role === "photographer" ? "/projects"
+            : "/dashboard"
+        );
       }
     }
   }, [user, isLoading, location, setLocation]);
@@ -163,6 +176,15 @@ function Router() {
         </Route>
         <Route path="/celebrities">
           {() => <ProtectedRoute component={Celebrities} roles={["admin"]} />}
+        </Route>
+        <Route path="/celebrity-accounts">
+          {() => <ProtectedRoute component={CelebrityAccounts} roles={["admin"]} />}
+        </Route>
+        <Route path="/celebrity-portal/offers">
+          {() => <ProtectedRoute component={CelebrityOffersPage} roles={["celebrity"]} />}
+        </Route>
+        <Route path="/celebrity-portal">
+          {() => <ProtectedRoute component={CelebrityPortal} roles={["celebrity"]} />}
         </Route>
         <Route component={NotFound} />
       </Switch>

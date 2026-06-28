@@ -60,7 +60,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const canSeeLeads = user.role === "admin" || !!(user as any).canViewLeads;
   const canSeeAccounting = user.role === "admin" || !!(user as any).canViewAccounting;
 
-  const roleLabel = user.role === "admin" ? t("roleAdmin") : user.role === "photographer" ? t("rolePhotographer") : t("roleClient");
+  const roleLabel = user.role === "admin" ? t("roleAdmin") : user.role === "photographer" ? t("rolePhotographer") : user.role === "celebrity" ? t("roleCelebrity") : t("roleClient");
 
   const navItems = [
     { label: t("dashboard"), icon: LayoutDashboard, href: "/dashboard", roles: ["admin"], show: true },
@@ -77,6 +77,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     { label: t("monthlyPackages"), icon: CalendarCheck, href: "/monthly-packages", roles: ["admin"], show: true },
     { label: t("workflows"), icon: Workflow, href: "/workflow-templates", roles: ["admin"], show: true },
     { label: t("clientAccounts"), icon: UserCog, href: "/client-accounts", roles: ["admin"], show: true },
+    { label: t("celebrityAccounts"), icon: Star, href: "/celebrity-accounts", roles: ["admin"], show: true },
     { label: t("settings"), icon: Settings, href: "/settings", roles: ["admin"], show: true },
   ];
 

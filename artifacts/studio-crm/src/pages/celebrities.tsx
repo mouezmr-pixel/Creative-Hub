@@ -38,6 +38,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 const AUDIENCE_OPTIONS = ["children", "teens", "youth", "adults", "families", "all"] as const;
 
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
+
 export default function Celebrities() {
   const { user } = useAuth();
   const { t, isRTL } = useLanguage();
@@ -48,6 +50,7 @@ export default function Celebrities() {
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [createdCredentials, setCreatedCredentials] = useState<{ username: string; password: string } | null>(null);
 
   const { data: celebrities = [], isLoading } = useListCelebrities();
   const createCelebrity = useCreateCelebrity();
@@ -121,7 +124,7 @@ export default function Celebrities() {
 
   const onSubmit = async (data: any) => {
     try {
-      await createCelebrity.mutateAsync({
+      const res = await createCelebrity.mutateAsync({
         data: {
           name: data.name,
           phone: data.phone || null,
@@ -134,12 +137,17 @@ export default function Celebrities() {
           priceMin: data.priceMin ? parseFloat(data.priceMin) : null,
           priceMax: data.priceMax ? parseFloat(data.priceMax) : null,
           bio: data.bio || null,
+          password: data.password || null,
         },
-      });
+      }) as any;
       queryClient.invalidateQueries({ queryKey: getListCelebritiesQueryKey() });
-      setIsCreateOpen(false);
-      resetForm();
-      toast({ description: t("celebrityCreated") });
+      if (res?.loginUsername) {
+        setCreatedCredentials({ username: res.loginUsername, password: data.password });
+      } else {
+        setIsCreateOpen(false);
+        resetForm();
+        toast({ description: t("celebrityCreated") });
+      }
     } catch (err: any) {
       console.error("Create celebrity error:", err);
       const msg = err?.message || err?.error?.error || t("failedToCreateCelebrity");
@@ -254,14 +262,53 @@ export default function Celebrities() {
                 <Label>{t("bio")}</Label>
                 <Input {...register("bio")} placeholder={t("bioPlaceholder")} />
               </div>
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={() => { setIsCreateOpen(false); resetForm(); }}>
-                  {t("cancel")}
-                </Button>
-                <Button type="submit" disabled={createCelebrity.isPending}>
-                  {createCelebrity.isPending ? t("creating") : t("create")}
-                </Button>
-              </div>
+
+              {createdCredentials ? (
+                <div className="rounded-xl border border-green-200 bg-green-50 p-4 space-y-2">
+                  <p className="text-sm font-semibold text-green-800">{t("celebrityPortalAccess")}</p>
+                  <div className="text-sm text-green-700 space-y-1">
+                    <div><span className="font-medium">{t("usernameLabel")}:</span> <span className="font-mono">{createdCredentials.username}</span></div>
+                    <div><span className="font-medium">{t("password")}:</span> <span className="font-mono">{createdCredentials.password}</span></div>
+                    <div className="pt-1">
+                      <span className="font-medium">{t("celebrityLoginUrl")}:</span>
+                      <div className="font-mono text-xs break-all mt-0.5">{window.location.origin}{BASE}/login</div>
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-1 rounded-xl"
+                    onClick={() => {
+                      setCreatedCredentials(null);
+                      setIsCreateOpen(false);
+                      resetForm();
+                    }}
+                  >
+                    {t("cancel")}
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="border-t border-border pt-4">
+                    <Label className="text-sm font-semibold">{t("celebrityPortalAccess")}</Label>
+                    <Label className="text-xs text-slate-500 dark:text-slate-400">{t("passwordCreatesCelebrityLogin")}</Label>
+                    <Input
+                      {...register("password")}
+                      type="password"
+                      placeholder={t("setPortalPassword")}
+                      className="mt-1 rounded-xl"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button type="button" variant="outline" onClick={() => { setIsCreateOpen(false); resetForm(); setCreatedCredentials(null); }}>
+                      {t("cancel")}
+                    </Button>
+                    <Button type="submit" disabled={createCelebrity.isPending}>
+                      {createCelebrity.isPending ? t("creating") : t("create")}
+                    </Button>
+                  </div>
+                </>
+              )}
             </form>
           </DialogContent>
         </Dialog>

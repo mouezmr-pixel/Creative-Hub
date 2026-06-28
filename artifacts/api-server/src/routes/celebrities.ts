@@ -1,7 +1,19 @@
 import { Router, type IRouter } from "express";
 import { eq, isNull } from "drizzle-orm";
-import { db, celebritiesTable } from "@workspace/db";
+import { db, celebritiesTable, usersTable } from "@workspace/db";
+import bcrypt from "bcrypt";
 import { requireAccess, requireAdmin } from "../middlewares/auth";
+
+function generateUsername(name: string): string {
+  const base = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "_")
+    .slice(0, 20);
+  const suffix = Math.floor(Math.random() * 900) + 100;
+  return `${base}_${suffix}`;
+}
 
 const router: IRouter = Router();
 
@@ -30,7 +42,17 @@ function calculateAge(birthDate: string): number | null {
   return age;
 }
 
-function formatCelebrity(c: typeof celebritiesTable.$inferSelect) {
+async function formatCelebrity(c: typeof celebritiesTable.$inferSelect) {
+  let loginUsername: string | null = null;
+
+  if (c.userId) {
+    const [linkedUser] = await db
+      .select({ username: usersTable.username })
+      .from(usersTable)
+      .where(eq(usersTable.id, c.userId));
+    loginUsername = linkedUser?.username ?? null;
+  }
+
   return {
     id: c.id,
     name: c.name,
@@ -45,6 +67,8 @@ function formatCelebrity(c: typeof celebritiesTable.$inferSelect) {
     priceMin: c.minPrice ? parseFloat(c.minPrice as unknown as string) : null,
     priceMax: c.maxPrice ? parseFloat(c.maxPrice as unknown as string) : null,
     bio: c.bio,
+    userId: c.userId,
+    loginUsername,
     archivedAt: c.archivedAt,
     createdAt: c.createdAt,
   };
@@ -65,17 +89,42 @@ router.get("/celebrities", async (req, res): Promise<void> => {
     .where(isNull(celebritiesTable.archivedAt))
     .orderBy(celebritiesTable.createdAt);
 
-  res.json(celebrities.map(formatCelebrity));
+  const formatted = await Promise.all(celebrities.map(formatCelebrity));
+  res.json(formatted);
 });
 
 router.post("/celebrities", async (req, res): Promise<void> => {
   if (!(await requireAdmin(req, res))) return;
   try {
-    const { name, phone, email, image, audiences, interests, dateOfBirth, tags, priceMin, priceMax, bio } = req.body;
+    const { name, phone, email, image, audiences, interests, dateOfBirth, tags, priceMin, priceMax, bio, password } = req.body;
 
     if (!name) {
       res.status(400).json({ error: "name is required" });
       return;
+    }
+
+    let userId: number | null = null;
+
+    if (password && password.trim()) {
+      const username = generateUsername(name);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const [newUser] = await db
+        .insert(usersTable)
+        .values({
+          username,
+          password: hashedPassword,
+          name,
+          email: email || null,
+          role: "celebrity",
+          canViewFinancials: false,
+          canManageClients: false,
+          canManageAllProjects: false,
+          canInvoice: false,
+          canViewLeads: false,
+          canViewAccounting: false,
+        })
+        .returning();
+      userId = newUser.id;
     }
 
     const [celebrity] = await db
@@ -92,10 +141,12 @@ router.post("/celebrities", async (req, res): Promise<void> => {
         minPrice: priceMin != null ? String(priceMin) : null,
         maxPrice: priceMax != null ? String(priceMax) : null,
         bio: bio ?? null,
+        userId,
       })
       .returning();
 
-    res.status(201).json(formatCelebrity(celebrity));
+    const formatted = await formatCelebrity(celebrity);
+    res.status(201).json(formatted);
   } catch (err: any) {
     console.error("celebrities POST error:", err);
     res.status(500).json({ error: err.message ?? "Failed to create celebrity" });
@@ -115,7 +166,8 @@ router.get("/celebrities/:id", async (req, res): Promise<void> => {
 
   if (!celebrity) { res.status(404).json({ error: "Celebrity not found" }); return; }
 
-  res.json(formatCelebrity(celebrity));
+  const formatted = await formatCelebrity(celebrity);
+  res.json(formatted);
 });
 
 router.patch("/celebrities/:id", async (req, res): Promise<void> => {
@@ -144,7 +196,8 @@ router.patch("/celebrities/:id", async (req, res): Promise<void> => {
   if (req.body.bio !== undefined) updateData.bio = req.body.bio;
 
   if (Object.keys(updateData).length === 0) {
-    res.json(formatCelebrity(existing[0]));
+    const formatted = await formatCelebrity(existing[0]);
+    res.json(formatted);
     return;
   }
 
@@ -155,7 +208,8 @@ router.patch("/celebrities/:id", async (req, res): Promise<void> => {
     .returning();
 
   if (!celebrity) { res.status(404).json({ error: "Celebrity not found" }); return; }
-  res.json(formatCelebrity(celebrity));
+  const formatted = await formatCelebrity(celebrity);
+  res.json(formatted);
 });
 
 router.delete("/celebrities/:id", async (req, res): Promise<void> => {
@@ -171,7 +225,8 @@ router.delete("/celebrities/:id", async (req, res): Promise<void> => {
     .returning();
 
   if (!celebrity) { res.status(404).json({ error: "Celebrity not found" }); return; }
-  res.json(formatCelebrity(celebrity));
+  const formatted = await formatCelebrity(celebrity);
+  res.json(formatted);
 });
 
 export default router;

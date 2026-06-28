@@ -28,4 +28,6 @@ export interface CreateCelebrityBody {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  password?: string | null;
 }

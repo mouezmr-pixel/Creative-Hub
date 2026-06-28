@@ -1,6 +1,7 @@
-import { pgTable, text, serial, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, numeric, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
+import { usersTable } from "./users";
 
 export const celebritiesTable = pgTable("celebrities", {
   id: serial("id").primaryKey(),
@@ -15,6 +16,7 @@ export const celebritiesTable = pgTable("celebrities", {
   minPrice: numeric("min_price", { precision: 10, scale: 2 }),
   maxPrice: numeric("max_price", { precision: 10, scale: 2 }),
   bio: text("bio"),
+  userId: integer("user_id").references(() => usersTable.id, { onDelete: "set null" }),
   archivedAt: timestamp("archived_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

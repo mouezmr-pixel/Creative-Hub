@@ -31,6 +31,10 @@ export interface Celebrity {
   priceMax?: number | null;
   /** @nullable */
   bio?: string | null;
+  /** @nullable */
+  userId?: number | null;
+  /** @nullable */
+  loginUsername?: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -71,7 +71,10 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
   (req.session as unknown as Record<string, unknown>).userId = user.id;
 
-  const clientData = user.role === "client" ? await getClientData(user.id) : null;
+  let clientData = null;
+  if (user.role === "client") {
+    clientData = await getClientData(user.id);
+  }
 
   req.session.save((err) => {
     if (err) {
@@ -109,7 +112,10 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     return;
   }
 
-  const clientData = user.role === "client" ? await getClientData(user.id) : null;
+  let clientData = null;
+  if (user.role === "client") {
+    clientData = await getClientData(user.id);
+  }
   res.json(formatUser(user, clientData));
 });
 
