@@ -81,6 +81,7 @@ const sessionStore = process.env.DATABASE_URL
       conString: process.env.DATABASE_URL,
       tableName: "session",
       pruneSessionInterval: 60 * 60,
+      createTableIfMissing: true,
     })
   : undefined;
 

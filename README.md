@@ -32,7 +32,7 @@ The full workflow lives inside **Project Detail** (`/projects/:id`):
 
 ### Payment History Ledger
 - `payment_history` table records each payment separately (amount, currency, method, receipt number, date, notes, recorded by)
-- A DB trigger auto-syncs `projects.amount_paid` on every insert/update/delete
+- `projects.amount_paid` is recomputed and written by the application (not a DB trigger) inside `POST /payments` and `DELETE /payments/:id`, each within a transaction with the payment write. `payments.ts` is the single authoritative path for this field — any other code that writes to `payment_history` directly must also update `projects.amount_paid` itself, or revenue figures will drift.
 - Accounting revenue is the **sum of `payment_history.amount`** (cash collected), not invoiced amount
 
 > **API-only — no dedicated frontend UI yet:** `GET /payments`, `GET /payments/summary`, `GET /payments/project/:id`, `POST /payments`, and `DELETE /payments/:id` are fully implemented in the backend. Data surfaces in the Accounting page via the `/accounting` routes, not via these endpoints directly. A dedicated Payments UI is planned (Package C).
@@ -226,7 +226,7 @@ Each creative (role=photographer) can be granted individual permissions via togg
 | `progress` | integer | 0–100 |
 | `expected_cost` | numeric | min 0; shown on Pro-forma |
 | `final_cost` | numeric | min 0; shown on Final Invoice |
-| `amount_paid` | numeric | min 0; auto-synced from payment_history by DB trigger |
+| `amount_paid` | numeric | min 0; recomputed in app code (see `payments.ts`) — not a DB trigger |
 | `currency` | text | DZD / USD / EUR |
 | `original_client_idea` | text | Step 1 of creative workflow |
 | `ai_generated_suggestion` | text | Step 2 — AI output |

@@ -18,6 +18,12 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
+// Demo accounts (admin/admin123, photographer1/photo123, client1/client123, ...) must
+// never be seeded automatically in a real deployment. Seeding only runs when this is
+// explicitly set to "true" — e.g. for local dev or a disposable demo environment.
+// Production/staging deployments with real client data must leave this unset.
+const ENABLE_DEMO_SEED = process.env.ENABLE_DEMO_SEED === "true";
+
 const DEMO_USERS = [
   {
     username: "admin",
@@ -109,106 +115,56 @@ async function initializeDatabase() {
   try {
     console.log("DATABASE: Running startup initialization...");
 
-    // Fix schema mismatches from previous migrations
-    await db.execute(sql.raw(`
-      DO $$
-      BEGIN
-        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='monthly_generation_log' AND column_name='generated_at') THEN
-          ALTER TABLE monthly_generation_log RENAME COLUMN generated_at TO created_at;
-        END IF;
-        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='monthly_generation_log' AND column_name='project_id' AND is_nullable='YES') THEN
-          ALTER TABLE monthly_generation_log ALTER COLUMN project_id SET NOT NULL;
-        END IF;
-        IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='monthly_package_items' AND column_name='price' AND data_type='numeric') THEN
-          ALTER TABLE monthly_package_items ALTER COLUMN price TYPE TEXT;
-        END IF;
-      END $$;
-    `));
+    // Schema is managed by Drizzle (lib/db/src/schema) and applied via
+    // `pnpm --filter @workspace/db run push` as an explicit deploy step.
+    // Do NOT run ad-hoc ALTER/CREATE TABLE statements here on every boot —
+    // multiple autoscale instances starting concurrently can race on raw DDL,
+    // and it makes the schema impossible to audit from migration history alone.
+    //
+    // IMPORTANT (one-time manual step before deploying this change):
+    // run `pnpm --filter @workspace/db run push` against the live database once
+    // to confirm it already matches lib/db/src/schema (celebrities.phone/email,
+    // monthly_packages, monthly_package_items, monthly_generation_log). All of
+    // these are already declared in the schema files, so push should be a no-op
+    // on a database that has been running this server — but verify before
+    // removing this safety net in a real production environment.
+    console.log("DATABASE: Skipping inline schema mutation (managed by drizzle-kit push)");
 
-    // Ensure required tables and columns exist
-    await db.execute(sql.raw(`
-      ALTER TABLE celebrities ADD COLUMN IF NOT EXISTS phone TEXT;
-      ALTER TABLE celebrities ADD COLUMN IF NOT EXISTS email TEXT;
+    // 1. Seed any missing demo users — opt-in only, see ENABLE_DEMO_SEED above.
+    if (ENABLE_DEMO_SEED) {
+      logger.warn("ENABLE_DEMO_SEED=true — seeding demo accounts. Do not use in production.");
+      for (const demo of DEMO_USERS) {
+        const [existing] = await db
+          .select({ id: usersTable.id, password: usersTable.password })
+          .from(usersTable)
+          .where(eq(usersTable.username, demo.username));
 
-      CREATE TABLE IF NOT EXISTS monthly_packages (
-        id SERIAL PRIMARY KEY,
-        title TEXT NOT NULL,
-        client_id INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
-        service_id INTEGER REFERENCES services(id) ON DELETE SET NULL,
-        currency TEXT NOT NULL DEFAULT 'TND',
-        notes TEXT,
-        is_active BOOLEAN NOT NULL DEFAULT TRUE,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-      );
-
-      CREATE TABLE IF NOT EXISTS monthly_package_items (
-        id SERIAL PRIMARY KEY,
-        package_id INTEGER NOT NULL REFERENCES monthly_packages(id) ON DELETE CASCADE,
-        title TEXT NOT NULL,
-        price TEXT NOT NULL,
-        display_order INTEGER NOT NULL DEFAULT 0
-      );
-
-      CREATE TABLE IF NOT EXISTS monthly_generation_log (
-        id SERIAL PRIMARY KEY,
-        package_id INTEGER NOT NULL REFERENCES monthly_packages(id) ON DELETE CASCADE,
-        project_id INTEGER NOT NULL,
-        month TEXT NOT NULL,
-        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-        UNIQUE(package_id, month)
-      );
-    `));
-    console.log("✅ Database tables verified");
-
-    // Create the session table for connect-pg-simple if it doesn't exist
-    await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS "session" (
-        "sid" varchar NOT NULL,
-        "sess" json NOT NULL,
-        "expire" timestamp(6) NOT NULL,
-        CONSTRAINT "session_pkey" PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE
-      )
-    `);
-    await db.execute(sql`
-      CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" ("expire")
-    `);
-    console.log("DATABASE: Session table ready");
-
-    // 1. Seed any missing demo users
-    for (const demo of DEMO_USERS) {
-      const [existing] = await db
-        .select({ id: usersTable.id, password: usersTable.password })
-        .from(usersTable)
-        .where(eq(usersTable.username, demo.username));
-
-      if (!existing) {
-        const hashedPassword = await bcrypt.hash(demo.password, 10);
-        await db.insert(usersTable).values({
-          username: demo.username,
-          password: hashedPassword,
-          name: demo.name,
-          email: demo.email,
-          role: demo.role,
-          profession: demo.profession,
-          canViewFinancials: demo.canViewFinancials,
-          canManageClients: demo.canManageClients,
-          canManageAllProjects: demo.canManageAllProjects,
-          canInvoice: demo.canInvoice,
-          canViewLeads: demo.canViewLeads,
-          canViewAccounting: demo.canViewAccounting,
-        });
-        console.log(`DATABASE: Created user '${demo.username}' (${demo.role})`);
-        logger.info({ username: demo.username, role: demo.role }, "Seeded demo user");
-      } else if (demo.role === "client") {
-        // Sync canViewFinancials for existing demo clients
-        await db
-          .update(usersTable)
-          .set({ canViewFinancials: demo.canViewFinancials })
-          .where(eq(usersTable.id, existing.id));
-      } else {
-        // 2. Migrate plaintext password to bcrypt if needed
-        if (!existing.password.startsWith("$2")) {
+        if (!existing) {
+          const hashedPassword = await bcrypt.hash(demo.password, 10);
+          await db.insert(usersTable).values({
+            username: demo.username,
+            password: hashedPassword,
+            name: demo.name,
+            email: demo.email,
+            role: demo.role,
+            profession: demo.profession,
+            canViewFinancials: demo.canViewFinancials,
+            canManageClients: demo.canManageClients,
+            canManageAllProjects: demo.canManageAllProjects,
+            canInvoice: demo.canInvoice,
+            canViewLeads: demo.canViewLeads,
+            canViewAccounting: demo.canViewAccounting,
+          });
+          console.log(`DATABASE: Created user '${demo.username}' (${demo.role})`);
+          logger.info({ username: demo.username, role: demo.role }, "Seeded demo user");
+        } else if (demo.role === "client") {
+          // Sync canViewFinancials for existing demo clients
+          await db
+            .update(usersTable)
+            .set({ canViewFinancials: demo.canViewFinancials })
+            .where(eq(usersTable.id, existing.id));
+        } else if (!existing.password.startsWith("$2")) {
+          // Migrate plaintext password to bcrypt if needed
           const hashed = await bcrypt.hash(existing.password, 10);
           await db.update(usersTable).set({ password: hashed }).where(eq(usersTable.id, existing.id));
           console.log(`DATABASE: Migrated password for '${demo.username}' to bcrypt`);
@@ -217,7 +173,7 @@ async function initializeDatabase() {
       }
     }
 
-    // 3. Also migrate any other non-demo users that have plaintext passwords
+    // 3. Migrate any other non-demo users that have plaintext passwords (always runs — real security hardening, not demo-specific)
     const allUsers = await db.select({ id: usersTable.id, username: usersTable.username, password: usersTable.password }).from(usersTable);
     for (const user of allUsers) {
       if (!user.password.startsWith("$2")) {
@@ -228,11 +184,13 @@ async function initializeDatabase() {
       }
     }
 
-    // 4. Sync canViewFinancials for demo clients in the clients table
-    await db.execute(
-      sql`UPDATE clients SET can_view_financials = true WHERE user_id IN (SELECT id FROM users WHERE username IN ('client1', 'client2'))`
-    );
-    console.log("DATABASE: Client financials synced");
+    // 4. Sync canViewFinancials for demo clients — opt-in only, see ENABLE_DEMO_SEED above.
+    if (ENABLE_DEMO_SEED) {
+      await db.execute(
+        sql`UPDATE clients SET can_view_financials = true WHERE user_id IN (SELECT id FROM users WHERE username IN ('client1', 'client2'))`
+      );
+      console.log("DATABASE: Client financials synced");
+    }
 
     console.log("DATABASE: Admin user created/verified successfully");
     logger.info("Database initialization complete");

@@ -1,3 +1,9 @@
+// SINGLE SOURCE OF TRUTH for projects.amountPaid:
+// POST /payments and DELETE /payments/:id below recompute amountPaid from
+// SUM(payment_history.amount) inside the same DB transaction as the write.
+// There is no DB trigger (see README) — if any other code path inserts/deletes
+// payment_history rows directly, it MUST also update projects.amountPaid here,
+// or the cached total on the project will silently drift from the ledger.
 import { Router, type IRouter } from "express";
 import { eq, and, gte, lte, desc, sql } from "drizzle-orm";
 import {
