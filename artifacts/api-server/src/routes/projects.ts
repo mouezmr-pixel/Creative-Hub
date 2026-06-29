@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { db, projectsTable, clientsTable, usersTable, projectAssigneesTable, servicesTable, expensesTable } from "@workspace/db";
 import { format } from "date-fns";
 import {
@@ -21,6 +21,28 @@ function computeDebt(project: typeof projectsTable.$inferSelect): number {
   return Math.max(0, finalCost - discount - amountPaid);
 }
 
+type AssigneeRow = {
+  id: number;
+  name: string;
+  profession: string | null;
+  role: string;
+  paymentType: string | null;
+  commissionType: string | null;
+  commissionValue: string | null;
+};
+
+function mapAssigneeRow(r: AssigneeRow) {
+  return {
+    id: r.id,
+    name: r.name,
+    profession: r.profession ?? null,
+    role: r.role,
+    paymentType: (r.paymentType ?? "per_project") as string,
+    commissionType: (r.commissionType ?? null) as string | null,
+    commissionValue: r.commissionValue != null ? parseFloat(r.commissionValue as string) : null,
+  };
+}
+
 async function getAssignees(projectId: number) {
   const rows = await db
     .select({
@@ -35,15 +57,7 @@ async function getAssignees(projectId: number) {
     .from(projectAssigneesTable)
     .innerJoin(usersTable, eq(projectAssigneesTable.userId, usersTable.id))
     .where(eq(projectAssigneesTable.projectId, projectId));
-  return rows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    profession: r.profession ?? null,
-    role: r.role,
-    paymentType: (r.paymentType ?? "per_project") as string,
-    commissionType: (r.commissionType ?? null) as string | null,
-    commissionValue: r.commissionValue != null ? parseFloat(r.commissionValue as string) : null,
-  }));
+  return rows.map(mapAssigneeRow);
 }
 
 async function syncAssignees(
@@ -145,6 +159,96 @@ async function formatProject(project: typeof projectsTable.$inferSelect) {
   };
 }
 
+// Batch version of formatProject for list endpoints. Loads client names,
+// photographer names, service names, and assignees for ALL given projects in
+// a fixed number of queries (independent of how many projects there are),
+// instead of formatProject's 4 queries per project. This is what GET /projects
+// must use — calling formatProject per project (the old code) means N projects
+// triggers up to 4N+1 SQL round trips, which is the main N+1 hotspot in this route.
+async function formatProjectsBatch(projectList: (typeof projectsTable.$inferSelect)[]) {
+  if (projectList.length === 0) return [];
+
+  const clientIds = [...new Set(projectList.map((p) => p.clientId).filter((id): id is number => id != null))];
+  const photographerIds = [...new Set(projectList.map((p) => p.photographerId).filter((id): id is number => id != null))];
+  const serviceIds = [...new Set(projectList.map((p) => p.serviceId).filter((id): id is number => id != null))];
+  const projectIds = projectList.map((p) => p.id);
+
+  const [clients, photographers, services, assigneeRows] = await Promise.all([
+    clientIds.length
+      ? db.select({ id: clientsTable.id, name: clientsTable.name }).from(clientsTable).where(inArray(clientsTable.id, clientIds))
+      : Promise.resolve([] as { id: number; name: string }[]),
+    photographerIds.length
+      ? db.select({ id: usersTable.id, name: usersTable.name }).from(usersTable).where(inArray(usersTable.id, photographerIds))
+      : Promise.resolve([] as { id: number; name: string }[]),
+    serviceIds.length
+      ? db.select({ id: servicesTable.id, title: servicesTable.title }).from(servicesTable).where(inArray(servicesTable.id, serviceIds))
+      : Promise.resolve([] as { id: number; title: string }[]),
+    db
+      .select({
+        projectId: projectAssigneesTable.projectId,
+        id: usersTable.id,
+        name: usersTable.name,
+        profession: usersTable.profession,
+        role: usersTable.role,
+        paymentType: sql<string>`${usersTable}.payment_type`,
+        commissionType: sql<string | null>`${projectAssigneesTable}.commission_type`,
+        commissionValue: sql<string | null>`${projectAssigneesTable}.commission_value`,
+      })
+      .from(projectAssigneesTable)
+      .innerJoin(usersTable, eq(projectAssigneesTable.userId, usersTable.id))
+      .where(inArray(projectAssigneesTable.projectId, projectIds)),
+  ]);
+
+  const clientNameById = new Map(clients.map((c) => [c.id, c.name]));
+  const photographerNameById = new Map(photographers.map((p) => [p.id, p.name]));
+  const serviceTitleById = new Map(services.map((s) => [s.id, s.title]));
+
+  const assigneesByProjectId = new Map<number, ReturnType<typeof mapAssigneeRow>[]>();
+  for (const row of assigneeRows) {
+    const list = assigneesByProjectId.get(row.projectId) ?? [];
+    list.push(mapAssigneeRow(row));
+    assigneesByProjectId.set(row.projectId, list);
+  }
+
+  return projectList.map((project) => {
+    const serviceId = project.serviceId ?? null;
+    const expectedCost = project.expectedCost ? parseFloat(project.expectedCost as unknown as string) : null;
+    const finalCost = project.finalCost ? parseFloat(project.finalCost as unknown as string) : null;
+    const amountPaid = project.amountPaid ? parseFloat(project.amountPaid as unknown as string) : null;
+    const discount = project.discount ? parseFloat(project.discount as unknown as string) : 0;
+    const remainingDebt = computeDebt(project);
+
+    return {
+      id: project.id,
+      title: project.title,
+      clientId: project.clientId,
+      clientName: project.clientId != null ? clientNameById.get(project.clientId) ?? null : null,
+      photographerId: project.photographerId,
+      photographerName: project.photographerId != null ? photographerNameById.get(project.photographerId) ?? null : null,
+      serviceId,
+      serviceName: serviceId != null ? serviceTitleById.get(serviceId) ?? null : null,
+      assignees: assigneesByProjectId.get(project.id) ?? [],
+      status: project.status,
+      progress: project.progress,
+      startDate: project.startDate,
+      deliveryDate: project.deliveryDate,
+      weTransferLink: project.weTransferLink,
+      expectedCost,
+      finalCost,
+      amountPaid,
+      discount,
+      remainingDebt,
+      currency: project.currency ?? "DZD",
+      originalClientIdea: project.originalClientIdea ?? null,
+      aiGeneratedSuggestion: project.aiGeneratedSuggestion ?? null,
+      finalProposedIdea: project.finalProposedIdea ?? null,
+      proformaIssuedAt: project.proformaIssuedAt ? project.proformaIssuedAt.toISOString() : null,
+      finalInvoiceIssuedAt: project.finalInvoiceIssuedAt ? project.finalInvoiceIssuedAt.toISOString() : null,
+      createdAt: project.createdAt.toISOString(),
+    };
+  });
+}
+
 router.get("/projects", async (req, res): Promise<void> => {
   const scope = await buildProjectScopeConditions(req, res);
   if (!scope) return;
@@ -167,7 +271,7 @@ router.get("/projects", async (req, res): Promise<void> => {
     .where(whereClause)
     .orderBy(projectsTable.createdAt);
 
-  let formatted: Record<string, unknown>[] = await Promise.all(projects.map(formatProject));
+  let formatted: Record<string, unknown>[] = await formatProjectsBatch(projects);
 
   if (qp.success && qp.data.hasDebt === "true") {
     formatted = formatted.filter((p) => ((p.remainingDebt as number) ?? 0) > 0);
