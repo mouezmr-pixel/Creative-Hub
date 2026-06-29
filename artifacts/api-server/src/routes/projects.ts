@@ -113,12 +113,16 @@ router.post("/projects", async (req, res): Promise<void> => {
     finalProposedIdea: parsed.data.finalProposedIdea ?? null,
   };
 
-  const [project] = await db.insert(projectsTable).values(insertData).returning();
+  const [project] = await db.transaction(async (tx) => {
+    const [inserted] = await tx.insert(projectsTable).values(insertData).returning();
 
-  if (assigneeIds.length > 0) {
-    const commissions = parsed.data.assigneeCommissions as Record<number, { commissionType: string; commissionValue: number | null }> | undefined;
-    await syncAssignees(project.id, assigneeIds, commissions);
-  }
+    if (assigneeIds.length > 0) {
+      const commissions = parsed.data.assigneeCommissions as Record<number, { commissionType: string; commissionValue: number | null }> | undefined;
+      await syncAssignees(tx, inserted.id, assigneeIds, commissions);
+    }
+
+    return [inserted];
+  });
 
   const formatted = await formatProject(project);
   res.status(201).json(formatted);
@@ -176,23 +180,10 @@ router.patch("/projects/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  // If status is transitioning to "completed", fetch old project to detect transition
-  let wasJustCompleted = false;
-  let oldProject: typeof projectsTable.$inferSelect | undefined;
-  if (parsed.data.status === "completed") {
-    [oldProject] = await db
-      .select()
-      .from(projectsTable)
-      .where(eq(projectsTable.id, params.data.id));
-    wasJustCompleted = oldProject != null && oldProject.status !== "completed";
-  }
-
   const updateData: Partial<typeof projectsTable.$inferInsert> = {};
   if (parsed.data.title != null) updateData.title = parsed.data.title;
   if (parsed.data.status != null) updateData.status = parsed.data.status;
   if (parsed.data.progress != null) updateData.progress = parsed.data.progress;
-  if (wasJustCompleted) updateData.progress = 100;
-  if (wasJustCompleted) updateData.completedAt = new Date();
   if ("startDate" in parsed.data) updateData.startDate = parsed.data.startDate;
   if ("deliveryDate" in parsed.data) updateData.deliveryDate = parsed.data.deliveryDate;
   if ("weTransferLink" in parsed.data) updateData.weTransferLink = parsed.data.weTransferLink;
@@ -209,39 +200,69 @@ router.patch("/projects/:id", async (req, res): Promise<void> => {
 
   const assigneeIds: number[] | undefined = parsed.data.assigneeIds;
 
+  // Everything below — the completed-status read, the project update, the
+  // assignee sync, and the auto-commission-expense creation — must succeed
+  // or fail together. Previously these ran as separate unguarded statements
+  // (a noted architecture-review risk): a failure partway through could
+  // leave assignees or commission expenses out of sync with the project's
+  // own saved state, especially under concurrent updates.
   let project: typeof projectsTable.$inferSelect | undefined;
+  let notFound = false;
 
-  if (Object.keys(updateData).length > 0) {
-    const [updated] = await db
-      .update(projectsTable)
-      .set(updateData)
-      .where(eq(projectsTable.id, params.data.id))
-      .returning();
-    if (!updated) {
-      res.status(404).json({ error: "Project not found" });
-      return;
+  await db.transaction(async (tx) => {
+    // If status is transitioning to "completed", fetch old project to detect transition
+    let wasJustCompleted = false;
+    if (parsed.data.status === "completed") {
+      const [oldProject] = await tx
+        .select()
+        .from(projectsTable)
+        .where(eq(projectsTable.id, params.data.id));
+      wasJustCompleted = oldProject != null && oldProject.status !== "completed";
     }
-    project = updated;
-  } else {
-    const [existing] = await db
-      .select()
-      .from(projectsTable)
-      .where(eq(projectsTable.id, params.data.id));
-    if (!existing) {
-      res.status(404).json({ error: "Project not found" });
-      return;
+
+    const finalUpdateData = { ...updateData };
+    if (wasJustCompleted) {
+      finalUpdateData.progress = 100;
+      finalUpdateData.completedAt = new Date();
     }
-    project = existing;
-  }
 
-  if (assigneeIds !== undefined) {
-    const commissions = parsed.data.assigneeCommissions as Record<number, { commissionType: string; commissionValue: number | null }> | undefined;
-    await syncAssignees(project.id, assigneeIds, commissions);
-  }
+    if (Object.keys(finalUpdateData).length > 0) {
+      const [updated] = await tx
+        .update(projectsTable)
+        .set(finalUpdateData)
+        .where(eq(projectsTable.id, params.data.id))
+        .returning();
+      if (!updated) {
+        notFound = true;
+        return;
+      }
+      project = updated;
+    } else {
+      const [existing] = await tx
+        .select()
+        .from(projectsTable)
+        .where(eq(projectsTable.id, params.data.id));
+      if (!existing) {
+        notFound = true;
+        return;
+      }
+      project = existing;
+    }
 
-  // Auto-record commission expenses when a project is completed
-  if (wasJustCompleted) {
-    await createCommissionExpensesForCompletedProject(project);
+    if (assigneeIds !== undefined) {
+      const commissions = parsed.data.assigneeCommissions as Record<number, { commissionType: string; commissionValue: number | null }> | undefined;
+      await syncAssignees(tx, project.id, assigneeIds, commissions);
+    }
+
+    // Auto-record commission expenses when a project is completed
+    if (wasJustCompleted) {
+      await createCommissionExpensesForCompletedProject(tx, project);
+    }
+  });
+
+  if (notFound || !project) {
+    res.status(404).json({ error: "Project not found" });
+    return;
   }
 
   const formatted = await formatProject(project);

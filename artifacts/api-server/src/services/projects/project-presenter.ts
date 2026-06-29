@@ -1,6 +1,7 @@
 import { eq, inArray, sql } from "drizzle-orm";
 import { db, projectsTable, clientsTable, usersTable, projectAssigneesTable, servicesTable } from "@workspace/db";
 import { computeDebt } from "./project-financials";
+import type { DbClient } from "./db-client";
 
 /**
  * ProjectPresenter — turns raw DB rows into the API response shape.
@@ -34,8 +35,8 @@ export function mapAssigneeRow(r: AssigneeRow) {
   };
 }
 
-export async function getAssignees(projectId: number) {
-  const rows = await db
+export async function getAssignees(client: DbClient, projectId: number) {
+  const rows = await client
     .select({
       id: usersTable.id,
       name: usersTable.name,
@@ -78,7 +79,7 @@ export async function formatProject(project: typeof projectsTable.$inferSelect) 
     serviceName = svc?.title ?? null;
   }
 
-  const assignees = await getAssignees(project.id);
+  const assignees = await getAssignees(db, project.id);
 
   const expectedCost = project.expectedCost ? parseFloat(project.expectedCost as unknown as string) : null;
   const finalCost = project.finalCost ? parseFloat(project.finalCost as unknown as string) : null;
