@@ -1,9 +1,10 @@
 // SINGLE SOURCE OF TRUTH for projects.amountPaid:
-// POST /payments and DELETE /payments/:id below recompute amountPaid from
-// SUM(payment_history.amount) inside the same DB transaction as the write.
-// There is no DB trigger (see README) — if any other code path inserts/deletes
-// payment_history rows directly, it MUST also update projects.amountPaid here,
-// or the cached total on the project will silently drift from the ledger.
+// POST /payments and DELETE /payments/:id below call
+// recalculateProjectAmountPaid() (services/payment-ledger.ts) inside the same
+// DB transaction as the write. There is no DB trigger (see README) — if any
+// other code path inserts/deletes payment_history rows directly, it MUST
+// also call that function in the same transaction, or the cached total on
+// the project will silently drift from the ledger.
 import { Router, type IRouter } from "express";
 import { eq, and, gte, lte, desc, sql } from "drizzle-orm";
 import {
@@ -14,6 +15,7 @@ import {
   clientsTable,
 } from "@workspace/db";
 import { getSessionUser, requireAccess } from "../middlewares/auth";
+import { recalculateProjectAmountPaid } from "../services/payment-ledger";
 
 const router: IRouter = Router();
 
@@ -315,14 +317,7 @@ router.post("/payments", async (req, res): Promise<void> => {
         })
         .returning();
 
-      const [sumRow] = await tx
-        .select({ total: sql<string>`COALESCE(SUM(${paymentHistoryTable.amount}), 0)` })
-        .from(paymentHistoryTable)
-        .where(eq(paymentHistoryTable.projectId, Number(projectId)));
-      await tx
-        .update(projectsTable)
-        .set({ amountPaid: sumRow.total } as any)
-        .where(eq(projectsTable.id, Number(projectId)));
+      await recalculateProjectAmountPaid(tx, Number(projectId));
 
       return [payment];
     });
@@ -359,15 +354,7 @@ router.delete("/payments/:id", async (req, res): Promise<void> => {
 
   await db.transaction(async (tx) => {
     await tx.delete(paymentHistoryTable).where(eq(paymentHistoryTable.id, id));
-
-    const [sumRow] = await tx
-      .select({ total: sql<string>`COALESCE(SUM(${paymentHistoryTable.amount}), 0)` })
-      .from(paymentHistoryTable)
-      .where(eq(paymentHistoryTable.projectId, projId));
-    await tx
-      .update(projectsTable)
-      .set({ amountPaid: sumRow.total } as any)
-      .where(eq(projectsTable.id, projId));
+    await recalculateProjectAmountPaid(tx, projId);
   });
 
   res.json({ ok: true });
