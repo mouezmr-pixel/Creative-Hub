@@ -166,4 +166,27 @@ describe("POST /api/settings/upload", () => {
     expect(res.status).toBe(400);
     expect(res.body).toHaveProperty("error");
   });
+
+  it("returns 400 when the claimed mime type does not match the actual file bytes", async () => {
+    const fakeBase64 = Buffer.from("this is not an image, just plain text bytes").toString("base64");
+    const res = await request(app)
+      .post("/api/settings/upload")
+      .send({ data: `data:image/png;base64,${fakeBase64}` });
+
+    expect(res.status).toBe(400);
+    expect(res.body).toHaveProperty("error");
+    expect(res.body.error).toMatch(/does not match/i);
+  });
+
+  it("accepts a real 1x1 PNG whose bytes match the claimed type", async () => {
+    const realPngBase64 =
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+    const res = await request(app)
+      .post("/api/settings/upload")
+      .send({ data: `data:image/png;base64,${realPngBase64}` });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("url");
+    expect(res.body.url).toMatch(/\.png$/);
+  });
 });

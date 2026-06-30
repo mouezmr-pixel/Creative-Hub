@@ -6,7 +6,9 @@ import type { StudioSettings } from "@workspace/db/schema/studio-settings";
 import { requireAccess } from "../middlewares/auth";
 import path from "path";
 import fs from "fs";
+import { writeFile } from "fs/promises";
 import crypto from "crypto";
+import { sniffImageType, extensionForSniffedType } from "../lib/image-sniff";
 
 const router: IRouter = Router();
 
@@ -108,7 +110,6 @@ router.post("/settings/upload", async (req, res) => {
       return;
     }
 
-    const ext = matches[1].replace("jpeg", "jpg");
     const base64 = matches[2];
     const buffer = Buffer.from(base64, "base64");
 
@@ -117,9 +118,16 @@ router.post("/settings/upload", async (req, res) => {
       return;
     }
 
+    const sniffedType = sniffImageType(buffer);
+    const ext = extensionForSniffedType(sniffedType);
+    if (!ext) {
+      res.status(400).json({ error: "File content does not match a supported image format (PNG, JPG, GIF, WEBP)." });
+      return;
+    }
+
     const filename = `${Date.now()}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
     const filepath = path.join(UPLOADS_DIR, filename);
-    fs.writeFileSync(filepath, buffer);
+    await writeFile(filepath, buffer);
     res.json({ url: `/uploads/${filename}` });
   } catch (err: any) {
     res.status(400).json({ error: err.message || "Upload failed" });
