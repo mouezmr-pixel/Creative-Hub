@@ -8,6 +8,7 @@ import connectPgSimple from "connect-pg-simple";
 import { rateLimit } from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { jsonErrorHandler } from "./middlewares/error-handler";
 
 const PgStore = connectPgSimple(session);
 
@@ -106,5 +107,7 @@ const UPLOADS_DIR = path.join(PROJECT_ROOT, "uploads");
 app.use("/uploads", express.static(UPLOADS_DIR));
 
 app.use("/api", router);
+
+app.use(jsonErrorHandler);
 
 export default app;
