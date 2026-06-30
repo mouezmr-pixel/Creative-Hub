@@ -44,19 +44,36 @@ function toResponse(s: StudioSettings) {
   };
 }
 
-router.get("/settings", async (_req, res): Promise<void> => {
+function toPublicResponse(s: StudioSettings) {
+  return {
+    name: s.name,
+    description: s.description ?? "",
+    logoUrl: s.logoUrl ?? "",
+  };
+}
+
+router.get("/settings", async (req, res): Promise<void> => {
+  // NOTE: deliberately not using getSessionUser()/getSessionUserId() here —
+  // both write a 401 response as a side effect when there's no session,
+  // which is correct for routes that require auth but wrong here: an
+  // anonymous request to this route should still get 200 with the minimal
+  // public subset (login screen, public landing page need the studio name
+  // before a session exists), not a 401.
+  const isAuthenticated = Boolean((req.session as unknown as Record<string, unknown> | undefined)?.userId);
+
   try {
     const settings = await getOrCreateSettings();
-    res.json(toResponse(settings));
+    res.json(isAuthenticated ? toResponse(settings) : toPublicResponse(settings));
   } catch {
-    res.json(toResponse({
+    const fallback: StudioSettings = {
       id: 1, name: "Creative Studio", description: "",
       address: "", phone: "", email: "", website: "", taxId: "",
       invoicePrefix: "INV-", proformaPrefix: "PF-",
       paymentTerms: "", invoiceFooter: "", invoiceNotes: "",
       logoUrl: "", stampUrl: "", showStamp: true, showSignature: true,
       createdAt: new Date(), updatedAt: new Date(),
-    }));
+    };
+    res.json(isAuthenticated ? toResponse(fallback) : toPublicResponse(fallback));
   }
 });
 

@@ -14,6 +14,17 @@ function createTestApp() {
   return app;
 }
 
+function createAnonymousTestApp() {
+  const app = express();
+  app.use(express.json());
+  app.use((req: any, _res, next) => {
+    req.session = {}; // no userId — simulates a logged-out / anonymous request
+    next();
+  });
+  app.use("/api", settingsRouter);
+  return app;
+}
+
 const mockSettings = {
   id: 1,
   name: "Creative Studio",
@@ -82,6 +93,34 @@ describe("GET /api/settings", () => {
     const res = await request(app).get("/api/settings");
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty("name");
+  });
+
+  it("returns the full settings shape (including address/phone/taxId) for an authenticated request", async () => {
+    const res = await request(app).get("/api/settings");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("address");
+    expect(res.body).toHaveProperty("phone");
+    expect(res.body).toHaveProperty("taxId");
+    expect(res.body).toHaveProperty("invoicePrefix");
+  });
+});
+
+describe("GET /api/settings (anonymous)", () => {
+  const app = createAnonymousTestApp();
+
+  it("returns 200 (not 401) so the public login/landing pages still work", async () => {
+    const res = await request(app).get("/api/settings");
+    expect(res.status).toBe(200);
+  });
+
+  it("returns only the minimal public subset — no address/phone/taxId/invoice data", async () => {
+    const res = await request(app).get("/api/settings");
+    expect(res.body).toHaveProperty("name");
+    expect(res.body).not.toHaveProperty("address");
+    expect(res.body).not.toHaveProperty("phone");
+    expect(res.body).not.toHaveProperty("taxId");
+    expect(res.body).not.toHaveProperty("invoicePrefix");
+    expect(res.body).not.toHaveProperty("stampUrl");
   });
 });
 
